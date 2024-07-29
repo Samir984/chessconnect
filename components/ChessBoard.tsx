@@ -1,5 +1,6 @@
 "use client";
 
+import { BOARD_WIDTH, getSquarePosition, SQUARE_SIZE } from "@/utils/helper";
 import { MakeSound } from "@/utils/sound";
 import { Chess, Square } from "chess.js";
 import { useState } from "react";
@@ -13,15 +14,15 @@ export default function ChessBoard() {
   function makeAMove(move: { from: string; to: string; promotion?: string }) {
     const gameCopy = new Chess(game.fen()); // Create a new Chess instance with the current game state
     const result = gameCopy.move(move);
-    console.log(gameCopy.inCheck());
+
     if (result) {
+      const isInCheck = gameCopy.inCheck();
       setGame(gameCopy); // Only set the game state if the move was valid
       new MakeSound(gameCopy); // Play the sound only if the move is valid
     }
 
     return result; // null if the move was illegal, the move object if the move was legal
   }
-
   function onDrop(sourceSquare: string, targetSquare: string) {
     const move = makeAMove({
       from: sourceSquare,
@@ -47,7 +48,7 @@ export default function ChessBoard() {
 
   function onPieceClick(piece: string, square: Square) {
     const moves = game.moves({ square, verbose: true });
-    // buf: Filter out duplicate moves
+    // Remove duplicate moves
     const uniqueMoves = moves.filter(
       (move, index, self) => index === self.findIndex((m) => m.to === move.to)
     );
@@ -59,7 +60,7 @@ export default function ChessBoard() {
   return (
     <div style={{ position: "relative" }}>
       <Chessboard
-        boardWidth={600} // Set the board width to 600 pixels
+        boardWidth={BOARD_WIDTH} // Set the board width to 600 pixels
         position={game.fen()}
         onPieceDrop={onDrop}
         onSquareClick={onSquareClick}
@@ -67,23 +68,20 @@ export default function ChessBoard() {
         customSquareStyles={{}}
       />
       {validMoves.map((square) => {
-        const [file, rank] = square.split("");
-        const fileIndex = "abcdefgh".indexOf(file);
-        const rankIndex = 8 - parseInt(rank, 10);
-        console.log(`${file}-${rank}-random`, validMoves);
+        const { top, left } = getSquarePosition(square);
         return (
           <div
-            key={`${file}-${rank}`}
+            key={square}
             style={{
               position: "absolute",
-              top: `${rankIndex * 75 + 37.5}px`, // Adjust based on new square size
-              left: `${fileIndex * 75 + 37.5}px`, // Adjust based on new square size
-              width: "8px",
-              height: "8px",
+              top: `${top + SQUARE_SIZE / 2}px`,
+              left: `${left + SQUARE_SIZE / 2}px`,
+              width: "16px",
+              height: "16px",
               backgroundColor: "white",
               borderRadius: "50%",
-              transform: "translate(-50%, -50%)", // Center the dot
-              pointerEvents: "none", // To ensure the dot doesn't interfere with piece movement
+              transform: "translate(-50%, -50%)",
+              pointerEvents: "none",
             }}
           />
         );

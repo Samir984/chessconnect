@@ -1,19 +1,14 @@
 "use client";
 import { Chess } from "chess.js";
 
-// export const pieceMoveSound = function () {
-//   const audio = new Audio("/sound/move.mp3");
-//   audio.play();
-// };
-
-// export const checkSound = function () {
-//   const audio = new Audio("/sound/check.mp3");
-//   audio.play();
-// };
 
 export class MakeSound {
   constructor(gameInstance: Chess) {
     switch (true) {
+      case gameInstance.isCheckmate():
+        this.checkMateSound();
+        break;
+
       case gameInstance.inCheck():
         this.checkSound();
         break;
@@ -26,6 +21,12 @@ export class MakeSound {
   pieceMoveSound = function () {
     console.log("move sound");
     const audio = new Audio("/sound/move.mp3");
+    audio.play();
+  };
+
+  checkMateSound = function () {
+    console.log("move sound");
+    const audio = new Audio("/sound/checkMate.mp3");
     audio.play();
   };
 
