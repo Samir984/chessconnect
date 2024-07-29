@@ -1,5 +1,4 @@
 "use client";
-
 import { BOARD_WIDTH, getSquarePosition, SQUARE_SIZE } from "@/utils/helper";
 import { MakeSound } from "@/utils/sound";
 import { Chess, Square } from "chess.js";
