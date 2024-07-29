@@ -32,6 +32,7 @@ export default function ChessBoard() {
   function onPieceClick(square: Square) {
     const moves = game.moves({ square, verbose: true });
     const validMoves = moves.map((move) => move.to);
+    console.log(validMoves)
     setValidMoves(validMoves);
   }
 
