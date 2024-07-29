@@ -1,4 +1,5 @@
 "use client";
+import { strict } from "assert";
 import { Chess, Square } from "chess.js";
 import { useState } from "react";
 import { Chessboard } from "react-chessboard";
@@ -6,6 +7,7 @@ import { Chessboard } from "react-chessboard";
 export default function ChessBoard() {
   const [game, setGame] = useState(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
+  const [targetSquare, setTargetSquare] = useState("");
 
   function makeAMove(move: { from: string; to: string; promotion?: string }) {
     const gameCopy = new Chess(game.fen()); // Create a new Chess instance with the current game state
@@ -29,10 +31,23 @@ export default function ChessBoard() {
     return true;
   }
 
-  function onPieceClick(square: Square) {
+  function onSquareClick(square: Square) {
+    console.log(square);
+    validMoves.some((vm) => {
+      if (vm === square) {
+        console.log(true);
+        onDrop(targetSquare, square);
+      }
+      return false;
+    });
+  }
+
+  function onPieceClick(piece: string, square: Square) {
+    // console.log(piece, square);
     const moves = game.moves({ square, verbose: true });
     const validMoves = moves.map((move) => move.to);
-    console.log(validMoves)
+    console.log(validMoves);
+    setTargetSquare(square);
     setValidMoves(validMoves);
   }
 
@@ -42,7 +57,8 @@ export default function ChessBoard() {
         boardWidth={400}
         position={game.fen()}
         onPieceDrop={onDrop}
-        onSquareClick={onPieceClick}
+        onSquareClick={onSquareClick}
+        onPieceClick={onPieceClick}
         customSquareStyles={{}}
       />
       {validMoves.map((square) => {
