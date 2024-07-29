@@ -1,7 +1,8 @@
 "use client";
+import { pieceMoveSound } from "@/utils/sound";
 import { strict } from "assert";
 import { Chess, Square } from "chess.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Chessboard } from "react-chessboard";
 
 export default function ChessBoard() {
@@ -24,6 +25,8 @@ export default function ChessBoard() {
       to: targetSquare,
       promotion: "q",
     });
+    pieceMoveSound();
+    console.log(move)
 
     // Illegal move
     if (move === null) return false;
@@ -32,10 +35,8 @@ export default function ChessBoard() {
   }
 
   function onSquareClick(square: Square) {
-    console.log(square);
     validMoves.some((vm) => {
       if (vm === square) {
-        console.log(true);
         onDrop(targetSquare, square);
       }
       return false;
@@ -43,10 +44,8 @@ export default function ChessBoard() {
   }
 
   function onPieceClick(piece: string, square: Square) {
-    // console.log(piece, square);
     const moves = game.moves({ square, verbose: true });
     const validMoves = moves.map((move) => move.to);
-    console.log(validMoves);
     setTargetSquare(square);
     setValidMoves(validMoves);
   }
@@ -54,7 +53,7 @@ export default function ChessBoard() {
   return (
     <div style={{ position: "relative" }}>
       <Chessboard
-        boardWidth={400}
+        boardWidth={600}
         position={game.fen()}
         onPieceDrop={onDrop}
         onSquareClick={onSquareClick}
