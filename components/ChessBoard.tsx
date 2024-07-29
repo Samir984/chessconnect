@@ -1,8 +1,8 @@
 "use client";
-import { pieceMoveSound } from "@/utils/sound";
-import { strict } from "assert";
+
+import { MakeSound } from "@/utils/sound";
 import { Chess, Square } from "chess.js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 
 export default function ChessBoard() {
@@ -13,9 +13,12 @@ export default function ChessBoard() {
   function makeAMove(move: { from: string; to: string; promotion?: string }) {
     const gameCopy = new Chess(game.fen()); // Create a new Chess instance with the current game state
     const result = gameCopy.move(move);
+    console.log(gameCopy.inCheck());
     if (result) {
       setGame(gameCopy); // Only set the game state if the move was valid
+      new MakeSound(gameCopy); // Play the sound only if the move is valid
     }
+
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
@@ -23,10 +26,8 @@ export default function ChessBoard() {
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q",
+      promotion: "q", // Always promote to a queen for simplicity
     });
-    pieceMoveSound();
-    console.log(move)
 
     // Illegal move
     if (move === null) return false;
@@ -38,6 +39,7 @@ export default function ChessBoard() {
     validMoves.some((vm) => {
       if (vm === square) {
         onDrop(targetSquare, square);
+        return true;
       }
       return false;
     });
@@ -45,7 +47,11 @@ export default function ChessBoard() {
 
   function onPieceClick(piece: string, square: Square) {
     const moves = game.moves({ square, verbose: true });
-    const validMoves = moves.map((move) => move.to);
+    // buf: Filter out duplicate moves
+    const uniqueMoves = moves.filter(
+      (move, index, self) => index === self.findIndex((m) => m.to === move.to)
+    );
+    const validMoves = uniqueMoves.map((move) => move.to);
     setTargetSquare(square);
     setValidMoves(validMoves);
   }
@@ -53,7 +59,7 @@ export default function ChessBoard() {
   return (
     <div style={{ position: "relative" }}>
       <Chessboard
-        boardWidth={600}
+        boardWidth={600} // Set the board width to 600 pixels
         position={game.fen()}
         onPieceDrop={onDrop}
         onSquareClick={onSquareClick}
@@ -64,14 +70,14 @@ export default function ChessBoard() {
         const [file, rank] = square.split("");
         const fileIndex = "abcdefgh".indexOf(file);
         const rankIndex = 8 - parseInt(rank, 10);
-
+        console.log(`${file}-${rank}-random`, validMoves);
         return (
           <div
-            key={square}
+            key={`${file}-${rank}`}
             style={{
               position: "absolute",
-              top: `${rankIndex * 50 + 25}px`, // Position the dot in the center of the square
-              left: `${fileIndex * 50 + 25}px`,
+              top: `${rankIndex * 75 + 37.5}px`, // Adjust based on new square size
+              left: `${fileIndex * 75 + 37.5}px`, // Adjust based on new square size
               width: "8px",
               height: "8px",
               backgroundColor: "white",
