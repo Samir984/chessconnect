@@ -1,4 +1,4 @@
-export const BOARD_WIDTH = 600;
+export const BOARD_WIDTH = 700;
 export const SQUARE_SIZE = BOARD_WIDTH / 8;
 
 export function getSquarePosition(square: string): {

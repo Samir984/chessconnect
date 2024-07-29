@@ -2,8 +2,7 @@ import ChessBoard from "@/components/ChessBoard";
 
 export default function Home() {
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col">
-      <h1 className="text-center text-3xl font-bold">Chess</h1>
+    <div className="flex justify-center  items-center h-screen ">
       <ChessBoard />
     </div>
   );
