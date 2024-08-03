@@ -20,7 +20,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className={`${inter.className} flex  gap-6`}>
+      <body className={`${inter.className} flex  gap-6 bg-black`}>
         <header>
           <MainNav />
         </header>
