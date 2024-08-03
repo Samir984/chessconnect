@@ -2,13 +2,13 @@ import Image from "next/image";
 import { MdOutlineOnlinePrediction } from "react-icons/md";
 import { IoCloudOfflineOutline } from "react-icons/io5";
 import GoogleSigninButton  from "./GooleSigninButton";
-import { IoIosLogOut } from "react-icons/io";
+
 
 import Link from "next/link";
 
 export default function MainNav() {
   return (
-    <div className="flex flex-col   border-r-2 border-gray-300 w-48  min-h-screen sticky top-0 left-0">
+    <div className="flex flex-col   border-r-2 border-gray-300 w-52  min-h-screen sticky top-0 left-0">
       <Logo />
 
       <nav className="flex-1 mt-8  text-white ">

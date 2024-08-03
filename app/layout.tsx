@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import MainNav from "@/components/MainNav";
+import Provider from "@/provider/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className={`${inter.className} flex  gap-6 bg-black`}>
-        <header>
-          <MainNav />
-        </header>
-        <main className="w-full h-screen">{children}</main>
+        <Provider>
+          <header>
+            <MainNav />
+          </header>
+          <main className="w-full h-screen">{children}</main>
+        </Provider>
       </body>
     </html>
   );
