@@ -3,7 +3,8 @@ import ChessBoard from "@/components/ChessBoard";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { json } from "stream/consumers";
-import UserLabel from "@/components/UserLabel";
+import OpponenetLabel from "@/components/OpponenetLabel";
+import YourLabel from "@/components/YourLabel";
 
 export default function Home() {
   const [ws, setWs] = useState<null | WebSocket>(null);
@@ -36,9 +37,9 @@ export default function Home() {
 
   return (
     <div className="flex gap-2  flex-col  justify-center h-screen ">
-      <UserLabel />
+      <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
       <ChessBoard socket={ws} />
-      <UserLabel />
+      <YourLabel />
     </div>
   );
 }

@@ -66,7 +66,7 @@ const KingPiece = ({ color, status, squareWidth }: KingPieceProps) => {
   );
 };
 
-export default function ChessBoard({ socket }: { socket: WebSocket }) {
+export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
   const [side, setSide] = useState<null | "B" | "W">(null);
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
@@ -104,11 +104,11 @@ export default function ChessBoard({ socket }: { socket: WebSocket }) {
 
     console.log(result);
 
-    socket.send(
-      JSON.stringify({
-        data: move,
-      })
-    );
+    // socket.send(
+    //   JSON.stringify({
+    //     data: move,
+    //   })
+    // );
 
     if (result) {
       setGame(gameCopy);
@@ -170,14 +170,14 @@ export default function ChessBoard({ socket }: { socket: WebSocket }) {
     ),
   };
 
-  useEffect(() => {
-    if (socket !== null) {
-      socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        makeAMove(data);
-      };
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (socket !== null) {
+  //     socket.onmessage = (event) => {
+  //       const data = JSON.parse(event.data);
+  //       makeAMove(data);
+  //     };
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (game.isGameOver()) {

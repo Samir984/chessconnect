@@ -1,39 +1,37 @@
 "use client";
-import type { SVGProps } from "react";
-import { signInWithGoogleAction } from "@/libs/action";
+import { useState, type SVGProps } from "react";
+import { signInWithGoogleAction, signOutAction } from "@/libs/action";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { MdOutlineLogout } from "react-icons/md";
 
 export default function GoogleSigninButton() {
   const { data: session } = useSession();
 
   return (
-    <div>
-      <button
-        className="bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300 w-full"
-        onClick={() => {
-          if (session) return;
-          signInWithGoogleAction();
-        }}
-      >
-        {!session ? (
-          <div className="flex items-center gap-4 py-4 px-2">
-            <GoogleIcon />
-            <span className="text-base">Sign in with Google</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4 py-4 px-2">
-            <Image
-              src={session.user?.image as string} // Fallback image
-              width={32}
-              height={32}
-              alt="user-image"
-            />
-            <span className="text-base">{session.user?.name}</span>
-          </div>
-        )}
-      </button>
-    </div>
+    <button
+      className="bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300 w-full"
+      onClick={() => {
+        signInWithGoogleAction();
+      }}
+    >
+      {!session ? (
+        <div className="flex items-center gap-4 py-4 px-2">
+          <GoogleIcon />
+          <span className="text-base">Sign in with Google</span>
+        </div>
+      ) : (
+        <div className="flex items-center   gap-4 py-4 px-2">
+          <Image
+            src={session.user?.image as string} // Fallback image
+            width={32}
+            height={32}
+            alt="user-image"
+          />
+          <span className="text-base">{session.user?.name}</span>
+        </div>
+      )}
+    </button>
   );
 }
 

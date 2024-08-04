@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { MdOutlineOnlinePrediction } from "react-icons/md";
-import { IoCloudOfflineOutline } from "react-icons/io5";
 import GoogleSigninButton from "./GooleSigninButton";
 
 import Link from "next/link";
@@ -17,8 +16,8 @@ export default function MainNav() {
               href="#"
               className="flex gap-4 items-center py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors "
             >
-              <MdOutlineOnlinePrediction size={24} />
-              <span>Play Online</span>
+              <MdOutlineOnlinePrediction size={28} />
+              <span className="text-xl">Start Game</span>
             </Link>
           </li>
         </ul>
@@ -36,7 +35,7 @@ export function Logo() {
     <Link href="/" className="w-full">
       <div className="flex  py-7 px-2 items-center justify-center  h-10 gap-2 font-semibold text-3xl w-full   font-sans text-center bg-white">
         <span>Chess</span>
-        <Image src={"/chess.png"} width={40} height={40} alt="logo" />
+        <Image src={"/chess.png"} width={40} height={40} alt="chess_logo" />
       </div>
     </Link>
   );
