@@ -4,6 +4,7 @@ import { MakeSound } from "@/utils/sound";
 import { Chess, Move, Square } from "chess.js";
 import { useState, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
+import toast from "react-hot-toast";
 
 type KingStatus = "W" | "L" | null;
 
@@ -66,6 +67,7 @@ const KingPiece = ({ color, status, squareWidth }: KingPieceProps) => {
 };
 
 export default function ChessBoard({ socket }: { socket: WebSocket }) {
+  const [side, setSide] = useState<null | "B" | "W">(null);
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
   const [targetSquare, setTargetSquare] = useState<string>("");
@@ -86,21 +88,41 @@ export default function ChessBoard({ socket }: { socket: WebSocket }) {
     promotion?: string;
   }): Move | null {
     const gameCopy = new Chess(game.fen());
-    const result = gameCopy.move(move);
-    console.log(move);
+    let result: Move | null = null; // Initialize result to null
+
+    try {
+      result = gameCopy.move(move);
+    } catch (err: unknown) {
+      console.log(err);
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        console.log("An unknown error occurred");
+        toast.error("An unknown error occurred");
+      }
+    }
+
+    console.log(result);
+
     socket.send(
       JSON.stringify({
         data: move,
       })
     );
+
     if (result) {
       setGame(gameCopy);
       new MakeSound(gameCopy);
     }
+
     return result;
   }
 
+  toast.success("render");
   function onDrop(sourceSquare: string, targetSquare: string): boolean {
+    if (game.turn() === "w" && side === "B") return false;
+    if (game.turn() === "b" && side === "W") return false;
+
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
@@ -118,7 +140,10 @@ export default function ChessBoard({ socket }: { socket: WebSocket }) {
     }
   }
 
-  function onPieceClick(piece: string, square: Square): void {
+  function onPieceClick(piece: string, square: Square) {
+    if (game.turn() === "w" && side === "B") return false;
+    if (game.turn() === "b" && side === "W") return false;
+
     const moves = game.moves({ square, verbose: true });
     //remove dublicate move
     const uniqueMoves = moves.filter(

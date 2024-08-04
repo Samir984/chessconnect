@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { MdOutlineOnlinePrediction } from "react-icons/md";
 import { IoCloudOfflineOutline } from "react-icons/io5";
-import GoogleSigninButton  from "./GooleSigninButton";
-
+import GoogleSigninButton from "./GooleSigninButton";
 
 import Link from "next/link";
 
@@ -20,15 +19,6 @@ export default function MainNav() {
             >
               <MdOutlineOnlinePrediction size={24} />
               <span>Play Online</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className="flex gap-4 items-center py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors"
-            >
-              <IoCloudOfflineOutline size={24} />
-              <span>Play Offline</span>
             </Link>
           </li>
         </ul>
