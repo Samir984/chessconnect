@@ -1,4 +1,5 @@
 import Image from "next/image";
+// import Chess_logo from "./chess.png";
 import { MdOutlineOnlinePrediction } from "react-icons/md";
 import GoogleSigninButton from "./GooleSigninButton";
 
@@ -13,7 +14,7 @@ export default function MainNav() {
         <ul className="space-y-4">
           <li className="">
             <Link
-              href="#"
+              href="/online"
               className="flex gap-4 items-center py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors "
             >
               <MdOutlineOnlinePrediction size={28} />

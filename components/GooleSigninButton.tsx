@@ -3,7 +3,7 @@ import { useState, type SVGProps } from "react";
 import { signInWithGoogleAction, signOutAction } from "@/libs/action";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { MdOutlineLogout } from "react-icons/md";
+// import { MdOutlineLogout } from "react-icons/md";
 
 export default function GoogleSigninButton() {
   const { data: session } = useSession();

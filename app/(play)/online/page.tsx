@@ -2,9 +2,8 @@ import ChessBoard from "@/components/ChessBoard";
 import OpponenetLabel from "@/components/OpponenetLabel";
 import YourLabel from "@/components/YourLabel";
 
-export default function Home() {
-  
-
+export default function PlayOnline() {
+// const [chessOption,setChess]
 
   return (
     <div className="flex gap-2  flex-col  justify-center h-screen ">

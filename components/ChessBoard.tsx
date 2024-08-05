@@ -13,6 +13,10 @@ interface KingPieceProps {
   status: KingStatus;
   squareWidth: number;
 }
+interface ChessboardProps {
+  socket?: WebSocket;
+  playerSide: null | "B" | "W" | "noMove";
+}
 
 const KingPiece = ({ color, status, squareWidth }: KingPieceProps) => {
   const kingColor = status === "L" ? "#c2410c" : "#15803d";
@@ -66,8 +70,14 @@ const KingPiece = ({ color, status, squareWidth }: KingPieceProps) => {
   );
 };
 
-export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
-  const [side, setSide] = useState<null | "B" | "W">(null);
+export default function ChessBoard({
+  chessOptions,
+}: {
+  chessOptions: ChessboardProps;
+}) {
+  const { socket, playerSide } = chessOptions;
+
+  const [side, setSide] = useState<null | "B" | "W" | "noMove">();
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
   const [targetSquare, setTargetSquare] = useState<string>("");
@@ -120,6 +130,7 @@ export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
 
   toast.success("render");
   function onDrop(sourceSquare: string, targetSquare: string): boolean {
+    if (side === "noMove") return true;
     if (game.turn() === "w" && side === "B") return false;
     if (game.turn() === "b" && side === "W") return false;
 
@@ -141,6 +152,7 @@ export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
   }
 
   function onPieceClick(piece: string, square: Square) {
+    if (side === "noMove") return true;
     if (game.turn() === "w" && side === "B") return false;
     if (game.turn() === "b" && side === "W") return false;
 
@@ -178,6 +190,9 @@ export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
   //     };
   //   }
   // }, []);
+  useEffect(() => {
+    setSide(playerSide);
+  }, [playerSide]);
 
   useEffect(() => {
     if (game.isGameOver()) {
@@ -189,7 +204,7 @@ export default function ChessBoard({ socket }: { socket: WebSocket | null }) {
   }, [game]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="relative min-h-[650px] ">
       <Chessboard
         boardWidth={BOARD_WIDTH}
         position={game.fen()}
