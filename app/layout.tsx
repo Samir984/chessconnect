@@ -21,12 +21,12 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className={`${inter.className} flex  gap-6 bg-black`}>
+      <body className={`${inter.className} flex   bg-black`}>
         <Provider>
           <header>
             <MainNav />
           </header>
-          <main className="w-full h-screen">{children}</main>
+          <main className="w-full h-screen ">{children}</main>
         </Provider>
       </body>
     </html>

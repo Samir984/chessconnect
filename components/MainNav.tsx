@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function MainNav() {
   return (
-    <div className="flex flex-col   border-r-2 border-gray-300 w-52  min-h-screen sticky top-0 left-0">
+    <div className="flex flex-col   border-r-2 border-gray-300 w-52  min-h-screen  sticky top-0 left-0">
       <Logo />
 
       <nav className="flex-1 mt-8  text-white ">
