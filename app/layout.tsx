@@ -8,13 +8,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Chess | Let's have fun",
-  description: "chess game live-chess chess ",
+  description: "chess game live-chess chess chess-nepal play chess in nepal ",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode;    
 }>) {
   return (
     <html lang="en">
