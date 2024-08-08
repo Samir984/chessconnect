@@ -7,7 +7,14 @@ import React, {
   useState,
 } from "react";
 
-const SocketContext = createContext();
+interface SocketContext {
+  socket: WebSocket | null;
+}
+const defaultSocketContext: SocketContext = {
+  socket: null,
+};
+
+const SocketContext = createContext<SocketContext>(defaultSocketContext);
 
 export default function SocketProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
@@ -25,6 +32,11 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     // };
     // setSocket(ws);
   }, [socket, email]);
+  return (
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
+  );
 }
 
 export const useSocket = () => {

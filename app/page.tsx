@@ -1,4 +1,4 @@
-import ChessBoard from "@/components/ChessBoard";
+import ChessBoard from "@/components/chess/ChessBoard";
 import OpponenetLabel from "@/components/OpponenetLabel";
 import YourLabel from "@/components/YourLabel";
 

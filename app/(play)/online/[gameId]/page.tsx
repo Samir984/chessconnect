@@ -1,5 +1,5 @@
 "use client";
-import ChessBoard from "@/components/ChessBoard";
+import ChessBoard from "@/components/chess/ChessBoard";
 import OpponenetLabel from "@/components/OpponenetLabel";
 import YourLabel from "@/components/YourLabel";
 import { Socket } from "dgram";
@@ -15,16 +15,13 @@ export default function PlayOnline() {
   useEffect(() => {
     // const ws = new WebSocket(`ws://localhost:8080?userId=${email}`);
     // console.log(ws);
-
     // ws.onerror = (error) => {
     //   console.error("WebSocket error:", error);
     //   toast.error("error in conneting");
     // };
-
     // ws.onclose = () => {
     //   console.log("WebSocket connection closed");
     // };
-
     // setSocket(ws);
   }, [socket, email]);
 
