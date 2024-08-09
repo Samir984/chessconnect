@@ -2,14 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-.connecting-loader {
-  width: 60px;
-  aspect-ratio: 1;
-  --g: conic-gradient(from -90deg at 10px 10px, #fff 90deg, #0000 0);
-  background: var(--g), var(--g) 10px 10px, var(--g) 20px 20px;
-  background-size: 50% 50%;
-  animation: l15 1s infinite;
+
+.generating-link-loader {
+  width: 25px;
+  height: 57px;
+  position: relative;
 }
+.generating-link-loader:before,
+.generating-link-loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #ff8001;    
+  box-shadow: 0 0 0 50px;
+  clip-path: polygon(100% 0, 23% 46%, 46% 44%, 15% 69%, 38% 67%, 0 100%, 76% 57%, 53% 58%, 88% 33%, 60% 37%);;
+}
+.generating-link-loader:after {
+  animation: l8 1s infinite;
+  transform: perspective(300px) translateZ(0px)
+}
+@keyframes l8 {
+  to {transform:perspective(300px) translateZ(180px);opacity:0}
+}
+
+.connecting-loader {
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 0 #fff;
+  animation: l2 1.5s infinite linear;
+  position: relative;
+}
+.connecting-loader :before,
+.connecting-loader :after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 #fff;
+  animation: inherit;
+  animation-delay: -0.5s;
+}
+.connecting-loader :after {
+  animation-delay: -1s;
+}
+@keyframes l2 {
+  100% {
+    box-shadow: 0 0 0 20px #35343444;
+  }
+}
+
 @keyframes l15 {
   90%,
   100% {

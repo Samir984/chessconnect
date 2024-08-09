@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { MakeSound } from "@/utils/sound";
 import CustomeKingPieces, { KingStatus } from "./CustomeKingPieces";
 
-interface GameContextType {
+interface ChessContextType {
   game: Chess;
   side: null | "B" | "W" | "noMove";
   validMoves: string[];
@@ -29,9 +29,15 @@ interface GameContextType {
   kingCustomePieces: any;
 }
 
-const ChessContext = createContext<GameContextType | undefined>(undefined);
+const ChessContext = createContext<ChessContextType | undefined>(
+  undefined
+);
 
-export default function ChesstProvider({ children }: { children: ReactNode }) {
+export default function ChesstContextProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [side, setSide] = useState<null | "B" | "W" | "noMove">(null);
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
