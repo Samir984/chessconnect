@@ -8,11 +8,12 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
+import ClipboardCopy from "@/components/ClipboardCopy";
 
 export default function Page() {
   const { data: session } = useSession();
   const [find, setfind] = useState(true);
-  const [link, setlink] = useState(true);
+  const [link, setlink] = useState(false);
 
   // useEffect(() => {
   //   setTimeout(() => {
@@ -73,7 +74,7 @@ export default function Page() {
                   loaderClassName="generating-link-loader"
                 />
               ) : (
-                <div>clopy link</div>
+                <ClipboardCopy value="i love you"/>
               )}
 
               {find ? (
