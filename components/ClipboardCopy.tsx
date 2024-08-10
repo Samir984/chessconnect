@@ -1,19 +1,25 @@
 "use client";
 import { FaRegCopy } from "react-icons/fa";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
-
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-export default function ClipboardCopy({ value }: { value: string }) {
-  const [copied, setCopied] = useState(false);
-
+type ClipboardCopyProps = {
+  value: string;
+  copied: boolean;
+  setCopied: Dispatch<SetStateAction<boolean>>;
+};
+export default function ClipboardCopy({
+  value,
+  copied,
+  setCopied,
+}: ClipboardCopyProps) {
   return (
     <div className="flex gap-5 items-center bg-black p-4 rounded-lg">
       <input
         value={value}
         readOnly
-        className="p-2 border border-gray-700 bg-gray-800 text-white rounded-md"
+        className="p-2 border border-gray-700 bg-gray-800 text-white rounded-md hidden"
       />
 
       <CopyToClipboard text={value} onCopy={() => setCopied(true)}>
@@ -24,7 +30,7 @@ export default function ClipboardCopy({ value }: { value: string }) {
         >
           {copied ? (
             <div className="flex gap-2 items-center">
-              <IoCheckmarkDoneOutline /> <span>Copied</span>
+              <IoCheckmarkDoneOutline /> <span>Copied!</span>
             </div>
           ) : (
             <div className="flex gap-2 items-center">
