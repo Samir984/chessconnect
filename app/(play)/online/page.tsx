@@ -35,7 +35,7 @@ export default function Page() {
           Connection with Player
         </h1>
 
-        <ConnectionButtons setStartMode={setStartMode} />
+        <ConnectionButtons />
 
         <div className="flex flex-col items-center">
           {session?.user ? (
@@ -102,22 +102,24 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <UserCard image={user?.image} name={user?.name} label="user" />
       </div>
 
-      {startMode === "R" || (startMode === "F" && copied) ? (
+      {startMode === "F" && !copied ? (
         <Loader
           label="Generating Connection Link"
           loaderClassName="generating-link-loader"
         />
       ) : (
-        <div className="flex items-center">
-          <span className="text-gray-500 text-base">
-            Share this link you your friend
-          </span>
-          <ClipboardCopy
-            value="i hate you"
-            copied={copied}
-            setCopied={setCopied}
-          />
-        </div>
+        startMode === "F" && (
+          <div className="flex items-center">
+            <span className="text-gray-500 text-base">
+              Share this link you your friend
+            </span>
+            <ClipboardCopy
+              value="i hate you"
+              copied={copied}
+              setCopied={setCopied}
+            />
+          </div>
+        )
       )}
 
       {startMode && (

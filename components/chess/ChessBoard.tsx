@@ -4,18 +4,16 @@ import { useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import toast from "react-hot-toast";
 import { useGameContext } from "./ChessContextProvider";
+import { useSocket } from "@/provider/SocketProvider";
 
 interface ChessboardProps {
-  socket?: WebSocket;
+  socket: WebSocket | null;
   playerSide: null | "B" | "W" | "noMove";
 }
 
-export default function ChessBoard({
-  chessOptions,
-}: {
-  chessOptions: ChessboardProps;
-}) {
-  const { playerSide, socket } = chessOptions;
+export default function ChessBoard() {
+  const { socket, message } = useSocket();
+
   const {
     game,
     side,
@@ -30,9 +28,12 @@ export default function ChessBoard({
     kingCustomePieces,
   } = useGameContext();
 
+  console.log(message.side);
   useEffect(() => {
-    setSide(playerSide);
-  }, [playerSide, setSide]);
+    console.log(message.side);
+
+    setSide(message.side);
+  }, [message.side, setSide]);
 
   return (
     <div className="relative min-h-[650px] ">
