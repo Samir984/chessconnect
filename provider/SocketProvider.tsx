@@ -75,7 +75,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
     ws.onclose = () => {
       console.log("WebSocket connection closed");
-      router.push(`online/`);
+      router.push(`/online`);
       toast.error("closed");
       setSocket(null);
     };

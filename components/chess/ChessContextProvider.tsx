@@ -20,11 +20,14 @@ interface ChessContextType {
   targetSquare: string;
   applyCustomStyles: boolean;
   setSide: (side: null | "B" | "W" | "noMove") => void;
-  makeAMove: (move: {
-    from: string;
-    to: string;
-    promotion?: string;
-  }) => Move | null;
+  makeAMove: (
+    move: {
+      from: string;
+      to: string;
+      promotion?: string;
+    },
+    send: boolean
+  ) => Move | null;
   onDrop: (sourceSquare: string, targetSquare: string) => boolean;
   onSquareClick: (square: string) => void;
   onPieceClick: (piece: string, square: Square) => void;
@@ -58,27 +61,32 @@ export default function ChesstContextProvider({
   }
 
   const makeAMove = useCallback(
-    (move: { from: string; to: string; promotion?: string }): Move | null => {
+    (
+      move: { from: string; to: string; promotion?: string },
+      send: boolean
+    ): Move | null => {
       console.log("make move function");
       const gameCopy = new Chess(game.fen());
       let result: Move | null = null;
       try {
         result = gameCopy.move(move);
       } catch (err) {
-        toast.error("imvalid move");
+        toast.error("invalid move");
       }
 
       if (result) {
-        socket?.send(
-          JSON.stringify({
-            type: "move",
-            data: {
-              turn: game.turn() === "w" ? "B" : "W",
-              gameId: message?.gameId,
-              move,
-            },
-          })
-        );
+        if (send) {
+          socket?.send(
+            JSON.stringify({
+              type: "move",
+              data: {
+                nextTurn: game.turn() === "w" ? "B" : "W",
+                gameId: message?.gameId,
+                move,
+              },
+            })
+          );
+        }
         setGame(gameCopy);
         new MakeSound(gameCopy);
       }
@@ -93,11 +101,14 @@ export default function ChesstContextProvider({
     if (game.turn() === "w" && side === "B") return false;
     if (game.turn() === "b" && side === "W") return false;
 
-    const move = makeAMove({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q",
-    });
+    const move = makeAMove(
+      {
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q",
+      },
+      true
+    );
 
     if (move === null) return false;
     setValidMoves([]);
@@ -140,18 +151,17 @@ export default function ChesstContextProvider({
     ),
   };
 
-  //listening for new message
+  // for message communication
   useEffect(() => {
     console.log("message socket on chess context");
     if (!socket) return;
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data as string);
-      toast.success("move message");
 
       switch (data.type) {
         case "move":
           toast.success("move");
-          makeAMove(data.move);
+          makeAMove({ ...data.move, send: false }, false);
           break;
       }
     };
@@ -167,11 +177,11 @@ export default function ChesstContextProvider({
     }
   }, [game]);
 
-  // to sad side
+  // to set side
   useEffect(() => {
-    console.log("game site effect");
+    console.log("game side effect");
     setSide(message.side);
-  }, [message.side]);
+  }, [message?.side]);
 
   return (
     <ChessContext.Provider
