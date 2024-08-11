@@ -9,6 +9,7 @@ import ClipboardCopy from "@/components/ClipboardCopy";
 import { User } from "next-auth";
 import { GameModeType, useSocket } from "@/provider/SocketProvider";
 import { Dispatch, SetStateAction, useState } from "react";
+import toast from "react-hot-toast";
 
 interface UserInfoProps {
   user: User;
@@ -34,7 +35,7 @@ export default function Page() {
           Connection with Player
         </h1>
 
-        <ConnectionButtons />
+        <ConnectionButtons loggedIn={session?.user ? true : false} />
 
         <div className="flex flex-col items-center">
           {session?.user ? (
@@ -66,14 +67,21 @@ const ConnectionNote = () => (
 );
 
 // ConnectionButtons Component
-const ConnectionButtons = () => {
+const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
   const { socket } = useSocket();
   const { setConnectionMode, connetionMode } = useSocket();
-  const handelSocketConnetion = function (connetionMode: "R" | "F") {
-    if (socket?.OPEN === 1) {
-      socket.close(1000, "Closing connection normally");
+
+  const handelSocketConnetion = function (connectMode: "R" | "F") {
+    if (!loggedIn) {
+      toast.error("Please login first");
+      return;
     }
-    setConnectionMode(connetionMode);
+    if (socket?.OPEN === 1 || connetionMode === connectMode) {
+      setConnectionMode(undefined);
+      socket?.close(1000, "Closing connection normally");
+      return;
+    }
+    setConnectionMode(connectMode);
   };
   return (
     <div className="flex gap-6 mb-12">
@@ -98,7 +106,7 @@ const ConnectionButtons = () => {
 // UserInfo Component
 const UserInfo = ({ user }: UserInfoProps) => {
   const [copied, setCopied] = useState(false);
-  const { connetionMode } = useSocket();
+  const { connetionMode, socket } = useSocket();
 
   return (
     <div className="flex flex-col items-center gap-y-4 w-96">
@@ -127,7 +135,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
         )
       )}
 
-      {connetionMode && (
+      {socket?.OPEN && (
         <Loader
           label={`${
             connetionMode === "F"

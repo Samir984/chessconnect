@@ -62,13 +62,14 @@ export default function ChesstContextProvider({
       console.log("make move function");
       const gameCopy = new Chess(game.fen());
       let result: Move | null = null;
-
+      console.log("turn", game.turn());
       try {
         result = gameCopy.move(move);
         socket?.send(
           JSON.stringify({
             type: "move",
             data: {
+              turn: game.turn() === "w" ? "B" : "W",
               gameId: message?.gameId,
               move,
             },

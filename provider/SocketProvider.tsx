@@ -37,7 +37,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState();
   // const [move, setMove] = useState();
   const { email, name, image } = user || {};
-  console.log(connetionMode);
+  console.log(connetionMode, socket?.OPEN);
 
   useEffect(() => {
     if (!connetionMode || !email) return;
