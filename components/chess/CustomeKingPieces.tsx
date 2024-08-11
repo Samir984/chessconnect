@@ -1,3 +1,5 @@
+import { useSocket } from "@/provider/SocketProvider";
+
 export type KingStatus = "W" | "L" | "D" | null;
 
 interface KingPieceProps {
@@ -14,7 +16,6 @@ export default function CustomeKingPieces({
   const kingColor =
     status === "L" ? "#c2410c" : status === "W" ? "#15803d" : "#606060";
 
-  console.log(status);
   return (
     <div
       style={{ position: "relative", width: squareWidth, height: squareWidth }}

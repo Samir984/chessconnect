@@ -5,11 +5,13 @@ import React, {
   useContext,
   useEffect,
   ReactNode,
+  useCallback,
 } from "react";
 import { Chess, Move, Square } from "chess.js";
 import toast from "react-hot-toast";
 import { MakeSound } from "@/utils/sound";
 import CustomeKingPieces, { KingStatus } from "./CustomeKingPieces";
+import { useSocket } from "@/provider/SocketProvider";
 
 interface ChessContextType {
   game: Chess;
@@ -36,6 +38,7 @@ export default function ChesstContextProvider({
 }: {
   children: ReactNode;
 }) {
+  const { socket, message } = useSocket();
   const [side, setSide] = useState<null | "B" | "W" | "noMove">(null);
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
@@ -54,33 +57,42 @@ export default function ChesstContextProvider({
     return null;
   }
 
-  function makeAMove(move: {
-    from: string;
-    to: string;
-    promotion?: string;
-  }): Move | null {
-    const gameCopy = new Chess(game.fen());
-    let result: Move | null = null;
+  const makeAMove = useCallback(
+    (move: { from: string; to: string; promotion?: string }): Move | null => {
+      console.log("make move function");
+      const gameCopy = new Chess(game.fen());
+      let result: Move | null = null;
 
-    try {
-      result = gameCopy.move(move);
-    } catch (err: unknown) {
-      console.log(err);
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        console.log("An unknown error occurred");
-        toast.error("An unknown error occurred");
+      try {
+        result = gameCopy.move(move);
+        socket?.send(
+          JSON.stringify({
+            type: "move",
+            data: {
+              gameId: message?.gameId,
+              move,
+            },
+          })
+        );
+      } catch (err: unknown) {
+        console.log(err);
+        if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          console.log("An unknown error occurred");
+          toast.error("An unknown error occurred");
+        }
       }
-    }
 
-    if (result) {
-      setGame(gameCopy);
-      new MakeSound(gameCopy);
-    }
+      if (result) {
+        setGame(gameCopy);
+        new MakeSound(gameCopy);
+      }
 
-    return result;
-  }
+      return result;
+    },
+    [game, socket, message.gameId]
+  );
 
   function onDrop(sourceSquare: string, targetSquare: string): boolean {
     if (side === "noMove") return true;
@@ -120,19 +132,34 @@ export default function ChesstContextProvider({
   const kingCustomePieces = {
     wK: ({ squareWidth }: { squareWidth: number }) => (
       <CustomeKingPieces
-        color="black"
+        color="white"
         status={getKingStatus("w")}
         squareWidth={squareWidth}
       />
     ),
     bK: ({ squareWidth }: { squareWidth: number }) => (
       <CustomeKingPieces
-        color="white"
+        color="black"
         status={getKingStatus("b")}
         squareWidth={squareWidth}
       />
     ),
   };
+
+  useEffect(() => {
+    console.log("message socker on chess context");
+    if (!socket) return;
+    socket.onmessage = (e) => {
+      const data = JSON.parse(e.data as string);
+      console.log("Received message:", data);
+      switch (data.type) {
+        case "move":
+          makeAMove(data.move);
+          toast.success("join successfully");
+          break;
+      }
+    };
+  }, [socket, makeAMove]);
 
   useEffect(() => {
     if (game.isGameOver()) {
@@ -142,6 +169,11 @@ export default function ChesstContextProvider({
       setApplyCustomStyles(false);
     }
   }, [game]);
+
+  useEffect(() => {
+    console.log("game site effect");
+    setSide(message.side);
+  }, [message.side]);
 
   return (
     <ChessContext.Provider

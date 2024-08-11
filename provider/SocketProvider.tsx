@@ -35,12 +35,18 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const user = session?.user as User;
   const [message, setMessage] = useState();
+  // const [move, setMove] = useState();
   const { email, name, image } = user || {};
 
   useEffect(() => {
     if (!startMode || !email) return;
+
+    // const ws = new WebSocket(
+    //   `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${startMode}`
+    // );
+
     const ws = new WebSocket(
-      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${startMode}`
+      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${startMode}`
     );
 
     ws.onopen = () => {
@@ -55,25 +61,21 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     };
 
     ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data as string);
-        console.log("Received message:", data);
-        toast.success("Message received");
-        switch (data.type) {
-          case "joined":
-            toast.success("join successfully");
-            setMessage(data);
-            router.push(`online/${data.gameId}`);
-            break;
-        }
-      } catch (error) {
-        console.error("Error parsing message data:", error);
-        toast.error("Error processing message");
+      const data = JSON.parse(e.data as string);
+      console.log("Received message:", data);
+      toast.success("Message received");
+      switch (data.type) {
+        case "joined":
+          toast.success("join successfully");
+          setMessage(data);
+          router.push(`online/${data.gameId}`);
+          break;
       }
     };
 
     ws.onclose = () => {
       console.log("WebSocket connection closed");
+      router.push(`online/`);
       toast.error("closed");
       setStartMode(undefined);
       setSocket(null);

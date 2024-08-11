@@ -12,8 +12,6 @@ interface ChessboardProps {
 }
 
 export default function ChessBoard() {
-  const { socket, message } = useSocket();
-
   const {
     game,
     side,
@@ -27,13 +25,6 @@ export default function ChessBoard() {
     onPieceClick,
     kingCustomePieces,
   } = useGameContext();
-
-  console.log(message.side);
-  useEffect(() => {
-    console.log(message.side);
-
-    setSide(message.side);
-  }, [message.side, setSide]);
 
   return (
     <div className="relative min-h-[650px] ">
