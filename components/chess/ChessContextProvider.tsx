@@ -62,9 +62,13 @@ export default function ChesstContextProvider({
       console.log("make move function");
       const gameCopy = new Chess(game.fen());
       let result: Move | null = null;
-      console.log("turn", game.turn());
       try {
         result = gameCopy.move(move);
+      } catch (err) {
+        toast.error("imvalid move");
+      }
+
+      if (result) {
         socket?.send(
           JSON.stringify({
             type: "move",
@@ -75,17 +79,6 @@ export default function ChesstContextProvider({
             },
           })
         );
-      } catch (err: unknown) {
-        console.log(err);
-        if (err instanceof Error) {
-          toast.error(err.message);
-        } else {
-          console.log("An unknown error occurred");
-          toast.error("An unknown error occurred");
-        }
-      }
-
-      if (result) {
         setGame(gameCopy);
         new MakeSound(gameCopy);
       }
@@ -147,21 +140,24 @@ export default function ChesstContextProvider({
     ),
   };
 
+  //listening for new message
   useEffect(() => {
-    console.log("message socker on chess context");
+    console.log("message socket on chess context");
     if (!socket) return;
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data as string);
-      console.log("Received message:", data);
+      toast.success("move message");
+
       switch (data.type) {
         case "move":
+          toast.success("move");
           makeAMove(data.move);
-          toast.success("join successfully");
           break;
       }
     };
   }, [socket, makeAMove]);
 
+  // check for gameOver ccase
   useEffect(() => {
     if (game.isGameOver()) {
       const timer = setTimeout(() => setApplyCustomStyles(true), 300);
@@ -171,6 +167,7 @@ export default function ChesstContextProvider({
     }
   }, [game]);
 
+  // to sad side
   useEffect(() => {
     console.log("game site effect");
     setSide(message.side);

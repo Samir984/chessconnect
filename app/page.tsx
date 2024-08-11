@@ -8,7 +8,7 @@ export default function Home() {
     <div className="flex gap-2  flex-col  justify-center h-screen ">
       <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
       <ChesstContextProvider>
-        <ChessBoard chessOptions={{ playerSide: null }} />
+        <ChessBoard />
       </ChesstContextProvider>
       <YourLabel />
     </div>

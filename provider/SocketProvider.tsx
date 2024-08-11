@@ -63,8 +63,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data as string);
-      console.log("Received message:", data);
-      toast.success("Message received");
+      toast.success("socket provider message");
       switch (data.type) {
         case "joined":
           toast.success("join successfully");
