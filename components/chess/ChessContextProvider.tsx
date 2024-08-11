@@ -29,9 +29,7 @@ interface ChessContextType {
   kingCustomePieces: any;
 }
 
-const ChessContext = createContext<ChessContextType | undefined>(
-  undefined
-);
+const ChessContext = createContext<ChessContextType | undefined>(undefined);
 
 export default function ChesstContextProvider({
   children,
@@ -46,6 +44,9 @@ export default function ChesstContextProvider({
 
   function getKingStatus(kingColor: "w" | "b"): KingStatus {
     if (game.isGameOver()) {
+      if (game.isDraw()) {
+        return "D";
+      }
       const winner =
         game.isCheckmate() && game.turn() === kingColor ? "L" : "W";
       return winner;

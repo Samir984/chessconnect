@@ -1,4 +1,4 @@
-export type KingStatus = "W" | "L" | null;
+export type KingStatus = "W" | "L" | "D" | null;
 
 interface KingPieceProps {
   color: string;
@@ -11,8 +11,10 @@ export default function CustomeKingPieces({
   status,
   squareWidth,
 }: KingPieceProps) {
-  const kingColor = status === "L" ? "#c2410c" : "#15803d";
+  const kingColor =
+    status === "L" ? "#c2410c" : status === "W" ? "#15803d" : "#606060";
 
+  console.log(status);
   return (
     <div
       style={{ position: "relative", width: squareWidth, height: squareWidth }}
