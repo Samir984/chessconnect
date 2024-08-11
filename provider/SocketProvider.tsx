@@ -14,15 +14,15 @@ import toast from "react-hot-toast";
 export type GameModeType = "R" | "F" | undefined;
 interface SocketContext {
   socket: WebSocket | null;
-  setStartMode: React.Dispatch<React.SetStateAction<GameModeType>>;
-  startMode: GameModeType;
+  setConnectionMode: React.Dispatch<React.SetStateAction<GameModeType>>;
+  connetionMode: GameModeType;
   message: any;
 }
 
 const defaultSocketContext: SocketContext = {
   socket: null,
-  setStartMode: () => {}, // Placeholder function, will be overwritten by provider
-  startMode: undefined,
+  setConnectionMode: () => {}, // Placeholder function, will be overwritten by provider
+  connetionMode: undefined,
   message: {},
 };
 
@@ -31,22 +31,23 @@ const SocketContext = createContext<SocketContext>(defaultSocketContext);
 export default function SocketProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [startMode, setStartMode] = useState<GameModeType>();
+  const [connetionMode, setConnectionMode] = useState<GameModeType>();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const user = session?.user as User;
   const [message, setMessage] = useState();
   // const [move, setMove] = useState();
   const { email, name, image } = user || {};
+  console.log(connetionMode);
 
   useEffect(() => {
-    if (!startMode || !email) return;
+    if (!connetionMode || !email) return;
 
     // const ws = new WebSocket(
-    //   `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${startMode}`
+    //   `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
     // );
 
     const ws = new WebSocket(
-      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${startMode}`
+      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
     );
 
     ws.onopen = () => {
@@ -77,18 +78,17 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       console.log("WebSocket connection closed");
       router.push(`online/`);
       toast.error("closed");
-      setStartMode(undefined);
       setSocket(null);
     };
 
     return () => {
       ws.close();
     };
-  }, [startMode, email, name, image, router]);
+  }, [connetionMode, email, name, image, router]);
 
   return (
     <SocketContext.Provider
-      value={{ socket, message, setStartMode, startMode }}
+      value={{ socket, message, setConnectionMode, connetionMode }}
     >
       {children}
     </SocketContext.Provider>

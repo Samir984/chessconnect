@@ -1,10 +1,9 @@
 "use client";
 import { BOARD_WIDTH, getSquarePosition, SQUARE_SIZE } from "@/utils/helper";
-import { useEffect } from "react";
+
 import { Chessboard } from "react-chessboard";
-import toast from "react-hot-toast";
+
 import { useGameContext } from "./ChessContextProvider";
-import { useSocket } from "@/provider/SocketProvider";
 
 interface ChessboardProps {
   socket: WebSocket | null;

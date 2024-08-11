@@ -23,7 +23,6 @@ interface UserCardProps {
 
 export default function Page() {
   const { data: session } = useSession();
-  const { socket, setStartMode } = useSocket();
 
   console.log(session?.user?.email);
 
@@ -68,20 +67,26 @@ const ConnectionNote = () => (
 
 // ConnectionButtons Component
 const ConnectionButtons = () => {
-  const { setStartMode, startMode } = useSocket();
-
+  const { socket } = useSocket();
+  const { setConnectionMode, connetionMode } = useSocket();
+  const handelSocketConnetion = function (connetionMode: "R" | "F") {
+    if (socket?.OPEN === 1) {
+      socket.close(1000, "Closing connection normally");
+    }
+    setConnectionMode(connetionMode);
+  };
   return (
     <div className="flex gap-6 mb-12">
       <button
         className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3"
-        onClick={() => setStartMode("R")}
+        onClick={() => handelSocketConnetion("R")}
       >
         <TbArrowsRandom size={24} className="text-blue-200" />
         <span className="text-lg">Connect with Random</span>
       </button>
       <button
         className="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3"
-        onClick={() => setStartMode("F")}
+        onClick={() => handelSocketConnetion("F")}
       >
         <FaUserFriends size={24} className="text-green-200" />
         <span className="text-lg">Connect with Friend</span>
@@ -93,7 +98,7 @@ const ConnectionButtons = () => {
 // UserInfo Component
 const UserInfo = ({ user }: UserInfoProps) => {
   const [copied, setCopied] = useState(false);
-  const { startMode } = useSocket();
+  const { connetionMode } = useSocket();
 
   return (
     <div className="flex flex-col items-center gap-y-4 w-96">
@@ -102,13 +107,13 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <UserCard image={user?.image} name={user?.name} label="user" />
       </div>
 
-      {startMode === "F" && !copied ? (
+      {connetionMode === "F" && !copied ? (
         <Loader
           label="Generating Connection Link"
           loaderClassName="generating-link-loader"
         />
       ) : (
-        startMode === "F" && (
+        connetionMode === "F" && (
           <div className="flex items-center">
             <span className="text-gray-500 text-base">
               Share this link you your friend
@@ -122,12 +127,12 @@ const UserInfo = ({ user }: UserInfoProps) => {
         )
       )}
 
-      {startMode && (
+      {connetionMode && (
         <Loader
           label={`${
-            startMode === "F"
+            connetionMode === "F"
               ? "Waiting for friend to connect"
-              : startMode === "R"
+              : connetionMode === "R"
               ? "Connecting to Player"
               : ""
           } `}
