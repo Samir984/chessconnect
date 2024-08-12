@@ -56,11 +56,6 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       "wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode"
     );
 
-   const ws = new WebSocket(
-      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
-    );
-
-
     ws.onopen = () => {
       console.log("WebSocket connection opened");
       toast.success("Connected successfully");
