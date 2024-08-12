@@ -5,10 +5,6 @@ import { Chessboard } from "react-chessboard";
 
 import { useGameContext } from "./ChessContextProvider";
 
-interface ChessboardProps {
-  socket: WebSocket | null;
-  playerSide: null | "B" | "W" | "noMove";
-}
 
 export default function ChessBoard() {
   const {

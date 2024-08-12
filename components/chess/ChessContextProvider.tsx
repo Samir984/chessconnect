@@ -167,6 +167,17 @@ export default function ChesstContextProvider({
     };
   }, [socket, makeAMove]);
 
+  const handelGameTermination = useCallback(() => {
+    if (side === "W")
+      socket?.send(
+        JSON.stringify({
+          type: "gameOver",
+          data: {
+            gameId: message.gameId,
+          },
+        })
+      );
+  }, [side]);
   // check for gameOver ccase
   useEffect(() => {
     if (game.isGameOver()) {
