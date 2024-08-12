@@ -17,7 +17,8 @@ export default function PlayOnline() {
   console.log(joinMessage?.opponent, joinMessage);
 
   return (
-    <div className="flex gap-2 ml-8 flex-col  justify-center h-screen ">
+    <div className="bg-black text-white min-h-screen flex flex-col gap-2 items-center justify-center">
+      <h1 className="text-4xl font-bold mb-6">Online Mode</h1>
       {joinMessage?.side === "W" ? (
         <>
           <OpponenetLabel opponentLabel={joinMessage.opponent} />

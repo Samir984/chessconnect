@@ -1,5 +1,5 @@
 "use client";
-import { User } from "next-auth";
+
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, {
@@ -43,7 +43,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const [connetionMode, setConnectionMode] = useState<GameModeType>(undefined);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const user = session?.user as User;
+  const user = session?.user;
   const [joinMessage, setJoinMessage] = useState<JoinedMessage | null>(null);
   const { email, name, image } = user || {};
   console.log(connetionMode, socket?.OPEN);
@@ -52,13 +52,14 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     if (!connetionMode || !email) return;
     console.log(connetionMode, email);
 
-    // const ws = new WebSocket(
-    //   "wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode"
-    // );
-
     const ws = new WebSocket(
-      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
+      "wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode"
     );
+
+   const ws = new WebSocket(
+      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
+    );
+
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");

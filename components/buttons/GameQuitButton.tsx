@@ -11,7 +11,7 @@ export default function GameQuitButton() {
         type: "quit",
         data: {
           gameId: joinMessage?.gameId,
-          quiter: joinMessage?.side,
+          quitter: joinMessage?.side,
         },
       })
     );

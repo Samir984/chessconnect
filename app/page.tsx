@@ -5,12 +5,15 @@ import YourLabel from "@/components/YourLabel";
 
 export default function Home() {
   return (
-    <div className="flex gap-2 ml-8  flex-col  justify-center h-screen ">
-      <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
-      <ChesstContextProvider>
-        <ChessBoard />
-      </ChesstContextProvider>
-      <YourLabel />
+    <div className="bg-black text-white min-h-screen flex flex-col items-center gap-2 justify-center">
+      <h1 className="text-4xl font-bold mb-6">Offline Mode</h1>
+      <div className="flex gap-4 flex-col items-center">
+        <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
+        <ChesstContextProvider>
+          <ChessBoard />
+        </ChesstContextProvider>
+        <YourLabel />
+      </div>
     </div>
   );
 }

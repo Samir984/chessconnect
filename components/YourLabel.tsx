@@ -3,9 +3,11 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import GameQuitButton from "./buttons/GameQuitButton";
+import { useSocket } from "@/provider/SocketProvider";
 
 export default function YourLabel() {
   const { data: session } = useSession();
+  const { socket } = useSocket();
   const isUser = true;
 
   return (
@@ -20,7 +22,7 @@ export default function YourLabel() {
         />
         <span className="text-base">{session?.user?.name || "Player"}</span>
       </div>
-      {isUser ? <GameQuitButton /> : ""}
+      {isUser && socket ? <GameQuitButton /> : ""}
     </div>
   );
 }

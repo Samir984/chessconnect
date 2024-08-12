@@ -68,7 +68,7 @@ const ConnectionNote = () => (
 
 // ConnectionButtons Component
 const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
-  const { socket, joinMessage } = useSocket();
+  const { socket } = useSocket();
   const { setConnectionMode, connetionMode } = useSocket();
 
   const handelSocketConnetion = function (connectMode: "R" | "F") {
@@ -81,6 +81,11 @@ const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
       socket?.close();
       return;
     }
+    if (connectMode === "F") {
+      toast.error("This feature work is currenly in progress");
+      return;
+    }
+
     setConnectionMode(connectMode);
   };
   return (
