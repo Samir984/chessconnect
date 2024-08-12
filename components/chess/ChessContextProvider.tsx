@@ -152,7 +152,7 @@ export default function ChesstContextProvider({
     ),
   };
 
-  // for joinMessage communication
+  // for communcation after connetion
   useEffect(() => {
     if (!socket) return;
     socket.onmessage = (e) => {
@@ -163,6 +163,14 @@ export default function ChesstContextProvider({
           toast.success("move");
           makeAMove({ ...data.move, send: false }, false);
           break;
+
+        case "close":
+          console.log(data);
+          toast.error(`Connection closed: ${data.message}`);
+          break;
+        case "quit":
+          console.log(data);
+          toast.error(`Connection closed: ${data.message}`);
       }
     };
   }, [socket, makeAMove]);

@@ -81,26 +81,17 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
           setJoinMessage(data);
           router.push(`online/${data.gameId}`);
           break;
-
-        case "close":
-          console.log(data);
-          toast.error(`Connection closed: ${data.message}`);
-          break;
-        case "quit":
-          console.log(data);
-          toast.error(`Connection closed: ${data.message}`);
       }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
+    ws.onclose = (e) => {
       router.push("/online");
 
       if (ws.CLOSED === 3) {
         console.log("socket provider", ws.CLOSED);
         setConnectionMode(undefined);
       }
-      toast.error("closed");
+      toast.error("closed websocket connetion");
       setSocket(null);
     };
 
