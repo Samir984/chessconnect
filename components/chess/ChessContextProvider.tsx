@@ -41,7 +41,7 @@ export default function ChesstContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const { socket, message } = useSocket();
+  const { socket, joinMessage } = useSocket();
   const [side, setSide] = useState<null | "B" | "W" | "noMove">(null);
   const [game, setGame] = useState<Chess>(new Chess());
   const [validMoves, setValidMoves] = useState<string[]>([]);
@@ -51,6 +51,7 @@ export default function ChesstContextProvider({
   function getKingStatus(kingColor: "w" | "b"): KingStatus {
     if (game.isGameOver()) {
       if (game.isDraw()) {
+        toast.success("game is draw");
         return "D";
       }
       const winner =
@@ -81,7 +82,7 @@ export default function ChesstContextProvider({
               type: "move",
               data: {
                 nextTurn: game.turn() === "w" ? "B" : "W",
-                gameId: message?.gameId,
+                gameId: joinMessage?.gameId,
                 move,
               },
             })
@@ -93,7 +94,7 @@ export default function ChesstContextProvider({
 
       return result;
     },
-    [game, socket, message.gameId]
+    [game, socket, joinMessage?.gameId]
   );
 
   function onDrop(sourceSquare: string, targetSquare: string): boolean {
@@ -151,9 +152,8 @@ export default function ChesstContextProvider({
     ),
   };
 
-  // for message communication
+  // for joinMessage communication
   useEffect(() => {
-    console.log("message socket on chess context");
     if (!socket) return;
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data as string);
@@ -173,26 +173,29 @@ export default function ChesstContextProvider({
         JSON.stringify({
           type: "gameOver",
           data: {
-            gameId: message.gameId,
+            gameId: joinMessage?.gameId,
           },
         })
       );
-  }, [side]);
+  }, [side, socket, joinMessage?.gameId]);
+
   // check for gameOver ccase
   useEffect(() => {
     if (game.isGameOver()) {
+      toast.success("game over");
+      handelGameTermination();
       const timer = setTimeout(() => setApplyCustomStyles(true), 300);
       return () => clearTimeout(timer);
     } else {
       setApplyCustomStyles(false);
     }
-  }, [game]);
+  }, [game, handelGameTermination]);
 
   // to set side
   useEffect(() => {
     console.log("game side effect");
-    setSide(message.side);
-  }, [message?.side]);
+    setSide(joinMessage?.side as "B" | "W");
+  }, [joinMessage?.side]);
 
   return (
     <ChessContext.Provider

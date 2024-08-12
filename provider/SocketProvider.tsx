@@ -11,19 +11,29 @@ import React, {
 } from "react";
 import toast from "react-hot-toast";
 
+interface JoinedMessage {
+  type: "joined";
+  gameId: string;
+  side: "W" | "B";
+  opponent: {
+    name: string;
+    image: string | null;
+  };
+}
+
 export type GameModeType = "R" | "F" | undefined;
 interface SocketContext {
   socket: WebSocket | null;
   setConnectionMode: React.Dispatch<React.SetStateAction<GameModeType>>;
   connetionMode: GameModeType;
-  message: any;
+  joinMessage: JoinedMessage | null;
 }
 
 const defaultSocketContext: SocketContext = {
   socket: null,
   setConnectionMode: () => {}, // Placeholder function, will be overwritten by provider
   connetionMode: undefined,
-  message: {},
+  joinMessage: null,
 };
 
 const SocketContext = createContext<SocketContext>(defaultSocketContext);
@@ -31,19 +41,19 @@ const SocketContext = createContext<SocketContext>(defaultSocketContext);
 export default function SocketProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [connetionMode, setConnectionMode] = useState<GameModeType>();
+  const [connetionMode, setConnectionMode] = useState<GameModeType>(undefined);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const user = session?.user as User;
-  const [message, setMessage] = useState();
-  // const [move, setMove] = useState();
+  const [joinMessage, setJoinMessage] = useState<JoinedMessage | null>(null);
   const { email, name, image } = user || {};
   console.log(connetionMode, socket?.OPEN);
 
   useEffect(() => {
     if (!connetionMode || !email) return;
+    console.log(connetionMode, email);
 
     // const ws = new WebSocket(
-    //   `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
+    //   "wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode"
     // );
 
     const ws = new WebSocket(
@@ -63,19 +73,33 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data as string);
-      toast.success("socket provider message");
+      console.log(data);
+
       switch (data.type) {
         case "joined":
           toast.success("join successfully");
-          setMessage(data);
+          setJoinMessage(data);
           router.push(`online/${data.gameId}`);
           break;
+
+        case "close":
+          console.log(data);
+          toast.error(`Connection closed: ${data.message}`);
+          break;
+        case "quit":
+          console.log(data);
+          toast.error(`Connection closed: ${data.message}`);
       }
     };
 
     ws.onclose = () => {
       console.log("WebSocket connection closed");
-      router.push(`/online`);
+      router.push("/online");
+
+      if (ws.CLOSED === 3) {
+        console.log("socket provider", ws.CLOSED);
+        setConnectionMode(undefined);
+      }
       toast.error("closed");
       setSocket(null);
     };
@@ -87,7 +111,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
   return (
     <SocketContext.Provider
-      value={{ socket, message, setConnectionMode, connetionMode }}
+      value={{ socket, joinMessage, setConnectionMode, connetionMode }}
     >
       {children}
     </SocketContext.Provider>

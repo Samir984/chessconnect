@@ -5,7 +5,7 @@ import YourLabel from "@/components/YourLabel";
 
 export default function Home() {
   return (
-    <div className="flex gap-2  flex-col  justify-center h-screen ">
+    <div className="flex gap-2 ml-8  flex-col  justify-center h-screen ">
       <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
       <ChesstContextProvider>
         <ChessBoard />

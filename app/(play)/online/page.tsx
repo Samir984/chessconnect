@@ -68,7 +68,7 @@ const ConnectionNote = () => (
 
 // ConnectionButtons Component
 const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
-  const { socket } = useSocket();
+  const { socket, joinMessage } = useSocket();
   const { setConnectionMode, connetionMode } = useSocket();
 
   const handelSocketConnetion = function (connectMode: "R" | "F") {
@@ -78,7 +78,7 @@ const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
     }
     if (socket?.OPEN === 1 || connetionMode === connectMode) {
       setConnectionMode(undefined);
-      socket?.close(1000, "Closing connection normally");
+      socket?.close();
       return;
     }
     setConnectionMode(connectMode);
