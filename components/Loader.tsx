@@ -7,7 +7,7 @@ export default function Loader({
 }) {
   return (
     <div className="flex flex-col mt-8 items-center justify-center">
-      <p className="text-gray-400 mb-5">{label}</p>
+      <p className="text-gray-400 mb-6">{label}</p>
       <div className={`${loaderClassName}`}></div>
     </div>
   );
