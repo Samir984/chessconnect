@@ -27,6 +27,8 @@ interface SocketContext {
   setConnectionMode: React.Dispatch<React.SetStateAction<GameModeType>>;
   connetionMode: GameModeType;
   joinMessage: JoinedMessage | null;
+  isConnetingToSocket: boolean;
+  setIsConnetingToSocket: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const defaultSocketContext: SocketContext = {
@@ -34,6 +36,8 @@ const defaultSocketContext: SocketContext = {
   setConnectionMode: () => {}, // Placeholder function, will be overwritten by provider
   connetionMode: undefined,
   joinMessage: null,
+  isConnetingToSocket: false,
+  setIsConnetingToSocket: () => {},
 };
 
 const SocketContext = createContext<SocketContext>(defaultSocketContext);
@@ -41,6 +45,7 @@ const SocketContext = createContext<SocketContext>(defaultSocketContext);
 export default function SocketProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session } = useSession();
+  const [isConnetingToSocket, setIsConnetingToSocket] = useState(false);
   const [connetionMode, setConnectionMode] = useState<GameModeType>(undefined);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const user = session?.user;
@@ -53,17 +58,19 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     console.log(connetionMode, email);
 
     const ws = new WebSocket(
-      "wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode"
+      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
     );
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
       toast.success("Connected successfully");
+      setIsConnetingToSocket(false);
       setSocket(ws);
     };
 
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
+      setIsConnetingToSocket(false);
       toast.error("Error connecting");
     };
 
@@ -82,7 +89,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
     ws.onclose = (e) => {
       router.push("/online");
-
+      setIsConnetingToSocket(false);
       if (ws.CLOSED === 3) {
         console.log("socket provider", ws.CLOSED);
         setConnectionMode(undefined);
@@ -98,7 +105,14 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
   return (
     <SocketContext.Provider
-      value={{ socket, joinMessage, setConnectionMode, connetionMode }}
+      value={{
+        socket,
+        joinMessage,
+        setConnectionMode,
+        connetionMode,
+        isConnetingToSocket,
+        setIsConnetingToSocket,
+      }}
     >
       {children}
     </SocketContext.Provider>

@@ -8,7 +8,7 @@ import Loader from "@/components/Loader";
 import ClipboardCopy from "@/components/ClipboardCopy";
 import { User } from "next-auth";
 import { GameModeType, useSocket } from "@/provider/SocketProvider";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface UserInfoProps {
@@ -25,23 +25,21 @@ interface UserCardProps {
 export default function Page() {
   const { data: session } = useSession();
 
-  console.log(session?.user?.email);
-
   return (
-    <div className="text-white py-8 relative min-h-screen flex flex-col items-center">
+    <div className="text-white py-8 relative min-h-screen flex flex-col items-center bg-black">
       <ConnectionNote />
       <div className="flex flex-col justify-center items-center mt-32 px-4">
-        <h1 className="text-4xl text-slate-100 font-extrabold mb-10 text-center leading-tight">
+        <h1 className="text-4xl text-slate-200 font-extrabold mb-10 text-center leading-tight">
           Connection with Player
         </h1>
 
-        <ConnectionButtons loggedIn={session?.user ? true : false} />
+        <ConnectionButtons loggedIn={!!session?.user} />
 
         <div className="flex flex-col items-center">
           {session?.user ? (
             <UserInfo user={session.user} find={true} />
           ) : (
-            <div className="mt-8 p-4 bg-gray-900 text-white text-center rounded-lg shadow-lg">
+            <div className="mt-8 p-4 bg-gray-800 text-white text-center rounded-lg shadow-lg">
               <p className="text-xl font-semibold">Please Login first</p>
               <p className="mt-2 text-slate-500">
                 You need to log in to play online
@@ -56,7 +54,7 @@ export default function Page() {
 
 // ConnectionNote Component
 const ConnectionNote = () => (
-  <div className="flex items-center gap-4 bg-gray-900 text-yellow-400 text-sm font-medium px-6 py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
+  <div className="flex items-center gap-4 bg-gray-800 text-yellow-300 text-sm font-medium px-6 py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
     <RiErrorWarningLine size={24} />
     <p>
       <strong>Note:</strong> Playing with a random person may occasionally
@@ -69,41 +67,55 @@ const ConnectionNote = () => (
 // ConnectionButtons Component
 const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
   const { socket } = useSocket();
-  const { setConnectionMode, connetionMode } = useSocket();
+
+  const {
+    setConnectionMode,
+    isConnetingToSocket,
+    setIsConnetingToSocket,
+    connetionMode,
+  } = useSocket();
 
   const handelSocketConnetion = function (connectMode: "R" | "F") {
     if (!loggedIn) {
       toast.error("Please login first");
       return;
     }
+
     if (socket?.OPEN === 1 || connetionMode === connectMode) {
       setConnectionMode(undefined);
       socket?.close();
       return;
     }
-    if (connectMode === "F") {
-      toast.error("This feature work is currenly in progress");
-      return;
-    }
-
+    setIsConnetingToSocket(true);
     setConnectionMode(connectMode);
   };
+
   return (
-    <div className="flex gap-6 mb-12">
-      <button
-        className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3"
-        onClick={() => handelSocketConnetion("R")}
-      >
-        <TbArrowsRandom size={24} className="text-blue-200" />
-        <span className="text-lg">Connect with Random</span>
-      </button>
-      <button
-        className="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3"
-        onClick={() => handelSocketConnetion("F")}
-      >
-        <FaUserFriends size={24} className="text-green-200" />
-        <span className="text-lg">Connect with Friend</span>
-      </button>
+    <div>
+      <div className="flex gap-6 mb-12">
+        <button
+          className="bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          onClick={() => handelSocketConnetion("R")}
+          disabled={isConnetingToSocket}
+        >
+          <TbArrowsRandom size={24} className="text-blue-300" />
+          <span className="text-lg">Connect with Random</span>
+        </button>
+        <button
+          className="bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          onClick={() => handelSocketConnetion("F")}
+          disabled={isConnetingToSocket}
+        >
+          <FaUserFriends size={24} className="text-green-300" />
+          <span className="text-lg">Connect with Friend</span>
+        </button>
+      </div>
+      {isConnetingToSocket && (
+        <div className="flex flex-col mt-6 justify-center items-center mb-24 w-full h-full ">
+          <p className="text-gray-400 mb-12">Connecting to websocket</p>
+          <div className="socket-connecting-loader"> </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -128,8 +140,8 @@ const UserInfo = ({ user }: UserInfoProps) => {
       ) : (
         connetionMode === "F" && (
           <div className="flex items-center">
-            <span className="text-gray-500 text-base">
-              Share this link you your friend
+            <span className="text-gray-400 text-base">
+              Share this link with your friend
             </span>
             <ClipboardCopy
               value="i hate you"
@@ -149,7 +161,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
               ? "Connecting to Player"
               : ""
           } `}
-          loaderClassName="connecting-loader"
+          loaderClassName="waiting-to-join "
         />
       )}
     </div>
@@ -157,7 +169,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
 };
 
 const UserCard = ({ image, name, label }: UserCardProps) => (
-  <div className="flex items-center px-2 py-3 gap-4 text-white bg-gray-700 rounded-lg shadow-md">
+  <div className="flex items-center px-2 py-3 gap-4 text-white bg-gray-800 rounded-lg shadow-md">
     <Image
       src={image || "/whiteP.png"}
       width={48}
