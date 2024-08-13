@@ -141,7 +141,9 @@ const UserInfo = ({ user }: UserInfoProps) => {
           loaderClassName="generating-link-loader"
         />
       ) : (
-        connetionMode === "F" && (
+        connetionMode === "F" &&
+        joiningLink !== null &&
+        !isConnetingToSocket && (
           <div className="flex  flex-col items-center">
             <span className="text-gray-400 text-base">
               Share this link with your friend

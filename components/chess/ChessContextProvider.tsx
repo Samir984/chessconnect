@@ -163,8 +163,12 @@ export default function ChesstContextProvider({
           toast.success("move");
           makeAMove(data.move, false);
           break;
+        case "gameOver":
+          console.log(data);
+          toast.error(`Connection closed: ${data.message}`);
+          break;
 
-        case "close":
+        case "unknown":
           console.log(data);
           toast.error(`Connection closed: ${data.message}`);
           break;

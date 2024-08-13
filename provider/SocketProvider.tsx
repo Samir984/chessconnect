@@ -67,8 +67,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     console.log(connetionMode, email);
 
     const ws = new WebSocket(
-      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
+      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
     );
+
+    // const ws = new WebSocket(
+    //   `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
+    // );
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
@@ -101,7 +105,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
         case "expiredJoiningLink":
           console.log(data.message);
-          toast.success(data.messae);
+          toast.error("Expired connetion Link: Inviter is no longer connected");
           break;
       }
     };

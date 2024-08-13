@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useSocket } from "@/provider/SocketProvider";
+import Loader from "@/components/Loader";
 
 interface PlayerProps {
   image: string;
@@ -27,7 +28,13 @@ const PlayerCard = ({ image, name, label }: PlayerProps) => (
 export default function Page() {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
-  const { setConnectionMode, setInviterId } = useSocket();
+  const {
+    setConnectionMode,
+    socket,
+    setIsConnetingToSocket,
+    setInviterId,
+    isConnetingToSocket,
+  } = useSocket();
   const { email, name, image } = session?.user || {};
 
   const inviterId = searchParams.get("inviterId") as string;
@@ -38,11 +45,9 @@ export default function Page() {
     if (!email) {
       toast.error("Please login in first");
     }
-
+    setIsConnetingToSocket(true);
     setConnectionMode("J");
   };
-
-  console.log("\n\n\n invider id:", inviterId);
 
   useEffect(() => {
     setInviterId(inviterId);
@@ -65,9 +70,21 @@ export default function Page() {
       <button
         className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3"
         onClick={handelJoining}
+        disabled={isConnetingToSocket}
       >
         <span className="text-lg">Send Connection Request</span>
       </button>
+
+      {isConnetingToSocket && (
+        <div className="flex flex-col mt-6 justify-center items-center mb-24 w-full h-full ">
+          <p className="text-gray-400 mb-12">Connecting to websocket</p>
+          <div className="socket-connecting-loader"> </div>
+        </div>
+      )}
+
+      {socket?.OPEN && (
+        <Loader label={"Joining to Play"} loaderClassName="waiting-to-join " />
+      )}
     </div>
   );
 }
