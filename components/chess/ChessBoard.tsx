@@ -5,7 +5,6 @@ import { Chessboard } from "react-chessboard";
 
 import { useGameContext } from "./ChessContextProvider";
 
-
 export default function ChessBoard() {
   const {
     game,
