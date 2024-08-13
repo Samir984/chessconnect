@@ -1,11 +1,26 @@
 "use client";
-import { BOARD_WIDTH, getSquarePosition, SQUARE_SIZE } from "@/utils/helper";
-
 import { Chessboard } from "react-chessboard";
-
 import { useGameContext } from "./ChessContextProvider";
+import { useEffect, useState } from "react";
 
 export default function ChessBoard() {
+  const [BOARD_WIDTH, setBOARD_WIDTH] = useState(660);
+  let SQUARE_SIZE = BOARD_WIDTH / 8;
+
+  function getSquarePosition(square: string): {
+    top: number;
+    left: number;
+  } {
+    const file = square[0];
+    const rank = parseInt(square[1], 10);
+    const fileIndex = "abcdefgh".indexOf(file);
+    const rankIndex = 8 - rank;
+    return {
+      top: rankIndex * SQUARE_SIZE,
+      left: fileIndex * SQUARE_SIZE,
+    };
+  }
+
   const {
     game,
     side,
@@ -20,8 +35,31 @@ export default function ChessBoard() {
     kingCustomePieces,
   } = useGameContext();
 
+  useEffect(() => {
+    const updateBoardWidth = () => {
+      console.log(BOARD_WIDTH, window.outerWidth);
+
+      if (window.outerWidth < 640) {
+        setBOARD_WIDTH(360);
+      } else if (window.outerWidth < 768) {
+        setBOARD_WIDTH(450);
+      } else if (window.outerWidth < 1024) {
+        setBOARD_WIDTH(600);
+      } else {
+        setBOARD_WIDTH(660);
+      }
+    };
+
+    updateBoardWidth();
+
+    window.addEventListener("resize", updateBoardWidth);
+
+    return () => window.removeEventListener("resize", updateBoardWidth);
+  }, [BOARD_WIDTH]);
+
+  console.log(BOARD_WIDTH, window.innerWidth);
   return (
-    <div className="relative min-h-[650px] ">
+    <div className="relative w-[360px] phone:w-[450px] tablet:w-[600px] laptop:w-[660px] ">
       <Chessboard
         boardWidth={BOARD_WIDTH}
         position={game.fen()}
@@ -29,8 +67,8 @@ export default function ChessBoard() {
         onSquareClick={onSquareClick}
         onPieceClick={onPieceClick}
         customSquareStyles={{}}
-        // customDarkSquareStyle={{ backgroundColor: "#0e7490" }}
-        // customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
+        customDarkSquareStyle={{ backgroundColor: "#0e7490" }}
+        customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
         customPieces={applyCustomStyles ? kingCustomePieces : undefined}
       />
       {validMoves.map((square) => {
@@ -42,9 +80,9 @@ export default function ChessBoard() {
               position: "absolute" as "absolute", // Explicit type assertion
               top: `${top + SQUARE_SIZE / 2}px`,
               left: `${left + SQUARE_SIZE / 2}px`,
-              width: "16px",
-              height: "16px",
-              backgroundColor: "white",
+              width: `${SQUARE_SIZE / 6}px`,
+              height: `${SQUARE_SIZE / 6}px`,
+              backgroundColor: "yellow",
               borderRadius: "50%",
               transform: "translate(-50%, -50%)",
               pointerEvents: "none",

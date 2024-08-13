@@ -29,7 +29,7 @@ export default function Page() {
     <div className="text-white py-8 relative min-h-screen flex flex-col items-center bg-black">
       <ConnectionNote />
       <div className="flex flex-col justify-center items-center mt-32 px-4">
-        <h1 className="text-4xl text-slate-200 font-extrabold mb-10 text-center leading-tight">
+        <h1 className="text-2xl phone:text-3xl laptop:text-4xl text-slate-200 font-extrabold mb-10 text-center leading-tight">
           Connection with Player
         </h1>
 
@@ -54,8 +54,8 @@ export default function Page() {
 
 // ConnectionNote Component
 const ConnectionNote = () => (
-  <div className="flex items-center gap-4 bg-gray-800 text-yellow-300 text-sm font-medium px-6 py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
-    <RiErrorWarningLine size={24} />
+  <div className="flex items-center line-clamp-5 gap-2 phone:gap-4 bg-gray-800 text-yellow-300 text-sm  font-normal phone:font-medium  px-3 py-2 phone:px-4 phone:py-3 laptop:px-6 laptop:py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
+    <RiErrorWarningLine className="w-6 h-6 phone:w-7 phone:h-7  flex-shrink-0 " />
     <p>
       <strong>Note:</strong> Playing with a random person may occasionally
       result in connection issues, as our site is still growing. For a smoother
@@ -95,9 +95,9 @@ const ConnectionButtons = ({
 
   return (
     <div>
-      <div className="flex gap-6 mb-12">
+      <div className="flex gap-6 mb-12 flex-wrap  items-center justify-center">
         <button
-          className="bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="bg-blue-700 whitespace-nowrap text-white font-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
           onClick={() => handelSocketConnetion("R")}
           disabled={isConnetingToSocket}
         >
@@ -105,7 +105,7 @@ const ConnectionButtons = ({
           <span className="text-lg">Connect with Random</span>
         </button>
         <button
-          className="bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="bg-green-700 whitespace-nowrap text-whitefont-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
           onClick={() => handelSocketConnetion("F")}
           disabled={isConnetingToSocket}
         >
@@ -129,7 +129,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
     useSocket();
 
   return (
-    <div className="flex flex-col items-center gap-y-4 w-96">
+    <div className="flex flex-col items-center gap-y-4 w-64 laptop:w-80">
       <div className="flex items-center justify-between w-full">
         <span className="text-base text-gray-400">You</span>
         <UserCard image={user?.image} name={user?.name} label="user" />
