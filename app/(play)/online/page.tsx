@@ -77,7 +77,7 @@ const ConnectionButtons = ({
     connetionMode,
     isConnetingToSocket,
   } = useSocket();
-  console.log(userId, "kjafkeakfsd\n\n\n");
+  console.log(userId, "setInviterId\n\n\n");
   const handelSocketConnetion = function (connectMode: "R" | "F") {
     if (!userId) {
       toast.error("Please login first");
