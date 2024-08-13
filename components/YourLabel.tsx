@@ -11,7 +11,7 @@ export default function YourLabel() {
   const isUser = true;
 
   return (
-    <div className="flex justify-between w-[360px] phone:w-[450px] tablet:w-[600px] laptop:w-[660px] px-2 py-3 gap-10 text-white bg-gray-800 rounded-lg shadow-lg">
+    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-2 phone:py-3 gap-10 text-white bg-gray-800 rounded-lg shadow-lg">
       <div className="flex gap-10 items-center">
         <Image
           src={session?.user?.image || "/whiteP.png"} // Fallback image

@@ -40,11 +40,11 @@ export default function ChessBoard() {
       console.log(BOARD_WIDTH, window?.outerWidth);
 
       if (window?.outerWidth < 640) {
-        setBOARD_WIDTH(360);
+        setBOARD_WIDTH(350);
       } else if (window?.outerWidth < 768) {
         setBOARD_WIDTH(450);
       } else if (window?.outerWidth < 1024) {
-        setBOARD_WIDTH(600);
+        setBOARD_WIDTH(550);
       } else {
         setBOARD_WIDTH(660);
       }
@@ -58,7 +58,7 @@ export default function ChessBoard() {
   }, [BOARD_WIDTH]);
 
   return (
-    <div className="relative w-[360px] phone:w-[450px] tablet:w-[600px] laptop:w-[660px] ">
+    <div className="relative w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] ">
       <Chessboard
         boardWidth={BOARD_WIDTH}
         position={game.fen()}

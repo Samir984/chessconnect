@@ -17,7 +17,7 @@ export default function OpponentLabel({
   const isUser = false;
 
   return (
-    <div className="flex justify-between w-[360px] phone:w-[450px] tablet:w-[600px] laptop:w-[660px] px-2 py-3 bg-black text-white border border-gray-700 rounded-lg shadow-lg">
+    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-2 phone:py-3  bg-black text-white border border-gray-700 rounded-lg shadow-lg">
       <div className="flex items-center gap-4">
         <Image
           src={image || "/blackP.png"} // Fallback image
