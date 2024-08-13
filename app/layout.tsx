@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   title: "Chess | Let's have fun",
   description: "chess game live-chess chess chess-nepal play chess in nepal ",
 };
-// export const serverProductionVarible = process.env.PRODUCTION as string;
 
 export default function RootLayout({
   children,

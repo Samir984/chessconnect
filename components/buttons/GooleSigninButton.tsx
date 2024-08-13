@@ -16,9 +16,9 @@ export default function GoogleSigninButton() {
       }}
     >
       {!session ? (
-        <div className="flex items-center gap-4 py-4 px-2">
+        <div className="flex items-center gap-4 py-4 px-1">
           <GoogleIcon />
-          <span className="text-base">Sign in with Google</span>
+          <span className="text-s,">Sign in with Google</span>
         </div>
       ) : (
         <div className="flex items-center   gap-4 py-4 px-2">

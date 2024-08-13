@@ -34,9 +34,9 @@ export default function MainNav() {
 export function Logo() {
   return (
     <Link href="/" className="w-full">
-      <div className="flex  py-7 px-2 items-center justify-center  h-10 gap-2 font-semibold text-3xl w-full   font-sans text-center bg-white">
+      <div className="flex  py-7 px-2 items-center justify-center  h-10 gap-1 font-semibold text-3xl w-full   font-sans text-center bg-white">
         <span>Chess</span>
-        <Image src={"/chess.png"} width={40} height={40} alt="chess_logo" />
+        <Image src={"/connect.png"} width={40} height={40} alt="chess_logo" />
       </div>
     </Link>
   );
