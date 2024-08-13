@@ -16,19 +16,21 @@ export default function GoogleSigninButton() {
       }}
     >
       {!session ? (
-        <div className="flex items-center gap-4 py-4 px-1">
+        <div className="flex items-center justify-center phone:justify-normal  gap-4 py-4 px-1">
           <GoogleIcon />
-          <span className="text-s,">Sign in with Google</span>
+          <span className="text-base hidden">Sign in with Google</span>
         </div>
       ) : (
-        <div className="flex items-center   gap-4 py-4 px-2">
+        <div className="flex items-center justify-center phone:justify-normal  gap-4 py-4 px-2">
           <Image
             src={session.user?.image as string} // Fallback image
             width={32}
             height={32}
             alt="user-image"
           />
-          <span className="text-base">{session.user?.name}</span>
+          <span className="text-base hidden phone:block">
+            {session.user?.name}
+          </span>
         </div>
       )}
     </button>
