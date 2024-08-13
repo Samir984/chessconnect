@@ -161,7 +161,7 @@ export default function ChesstContextProvider({
       switch (data.type) {
         case "move":
           toast.success("move");
-          makeAMove({ ...data.move, send: false }, false);
+          makeAMove(data.move, false);
           break;
 
         case "close":

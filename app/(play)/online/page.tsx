@@ -7,9 +7,10 @@ import { useSession } from "next-auth/react";
 import Loader from "@/components/Loader";
 import ClipboardCopy from "@/components/ClipboardCopy";
 import { User } from "next-auth";
-import { GameModeType, useSocket } from "@/provider/SocketProvider";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useSocket } from "@/provider/SocketProvider";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { socketCloseHandler } from "@/utils/helper";
 
 interface UserInfoProps {
   user: User;
@@ -33,7 +34,7 @@ export default function Page() {
           Connection with Player
         </h1>
 
-        <ConnectionButtons loggedIn={!!session?.user} />
+        <ConnectionButtons userId={session?.user?.email} />
 
         <div className="flex flex-col items-center">
           {session?.user ? (
@@ -65,10 +66,14 @@ const ConnectionNote = () => (
 );
 
 // ConnectionButtons Component
-const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
-  const { socket } = useSocket();
-
+const ConnectionButtons = ({
+  userId,
+}: {
+  userId: string | null | undefined;
+}) => {
   const {
+    socket,
+    joiningLink,
     setConnectionMode,
     isConnetingToSocket,
     setIsConnetingToSocket,
@@ -76,14 +81,26 @@ const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
   } = useSocket();
 
   const handelSocketConnetion = function (connectMode: "R" | "F") {
-    if (!loggedIn) {
+    if (!userId) {
       toast.error("Please login first");
       return;
     }
 
     if (socket?.OPEN === 1 || connetionMode === connectMode) {
       setConnectionMode(undefined);
-      socket?.close();
+
+      socketCloseHandler(socket, connetionMode, joiningLink, userId);
+      // if (joiningLink) {
+      //   socket?.close(
+      //     1000,
+      //     JSON.stringify({
+      //       type: "waitingQueueForFM_Cleanup",
+      //       gameId: getQueryParam(joiningLink, "gameId"),
+      //     })
+      //   );
+      // } else {
+      //   socket?.close();
+      // }
       return;
     }
     setIsConnetingToSocket(true);
@@ -123,7 +140,8 @@ const ConnectionButtons = ({ loggedIn }: { loggedIn: boolean }) => {
 // UserInfo Component
 const UserInfo = ({ user }: UserInfoProps) => {
   const [copied, setCopied] = useState(false);
-  const { connetionMode, socket } = useSocket();
+  const { connetionMode, socket, isConnetingToSocket, joiningLink } =
+    useSocket();
 
   return (
     <div className="flex flex-col items-center gap-y-4 w-96">
@@ -132,7 +150,10 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <UserCard image={user?.image} name={user?.name} label="user" />
       </div>
 
-      {connetionMode === "F" && !copied ? (
+      {connetionMode === "F" &&
+      !copied &&
+      joiningLink === null &&
+      !isConnetingToSocket ? (
         <Loader
           label="Generating Connection Link"
           loaderClassName="generating-link-loader"
