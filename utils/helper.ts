@@ -27,19 +27,18 @@ export function getQueryParam(queryParam: string, param: string) {
 export function socketCloseHandler(
   socket: WebSocket | null,
   connetionMode: GameModeType,
-  joiningLink: string | null,
   userId: string | null | undefined
 ) {
-  console.log(socket, connetionMode, joiningLink, userId);
+  console.log("handel socket closed", socket, connetionMode, userId);
   if (!socket || !userId || !connetionMode) return;
 
-  if (connetionMode === "F" && joiningLink) {
+  if (connetionMode === "F") {
     socket.send(
       JSON.stringify({
         type: "closeSocketBeforeJoin",
         data: {
           mode: connetionMode,
-          gameId: getQueryParam(joiningLink, "gameId"),
+          inviterId: userId,
         },
       })
     );
@@ -54,5 +53,5 @@ export function socketCloseHandler(
       })
     );
   }
-  socket.close();
+  socket.close(1000, "connetion closed from client side.");
 }

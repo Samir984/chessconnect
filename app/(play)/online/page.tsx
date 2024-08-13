@@ -8,7 +8,6 @@ import Loader from "@/components/Loader";
 import ClipboardCopy from "@/components/ClipboardCopy";
 import { User } from "next-auth";
 import { useSocket } from "@/provider/SocketProvider";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { socketCloseHandler } from "@/utils/helper";
 
@@ -25,7 +24,6 @@ interface UserCardProps {
 
 export default function Page() {
   const { data: session } = useSession();
-  const { email, name, image } = session?.user || {};
 
   return (
     <div className="text-white py-8 relative min-h-screen flex flex-col items-center bg-black">
@@ -74,13 +72,12 @@ const ConnectionButtons = ({
 }) => {
   const {
     socket,
-    joiningLink,
     setConnectionMode,
-    isConnetingToSocket,
     setIsConnetingToSocket,
     connetionMode,
+    isConnetingToSocket,
   } = useSocket();
-
+  console.log(userId, "kjafkeakfsd\n\n\n");
   const handelSocketConnetion = function (connectMode: "R" | "F") {
     if (!userId) {
       toast.error("Please login first");
@@ -89,7 +86,7 @@ const ConnectionButtons = ({
 
     if (socket?.OPEN === 1 || connetionMode === connectMode) {
       setConnectionMode(undefined);
-      socketCloseHandler(socket, connetionMode, joiningLink, userId);
+      socketCloseHandler(socket, connetionMode, userId);
       return;
     }
     setIsConnetingToSocket(true);

@@ -1,5 +1,6 @@
 "use client";
 
+import { getQueryParam } from "@/utils/helper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, {
@@ -21,15 +22,17 @@ export interface JoinedMessage {
   };
 }
 
-export type GameModeType = "R" | "F" | undefined;
+export type GameModeType = "R" | "F" | "J" | undefined;
 
 interface SocketContext {
   socket: WebSocket | null;
+  inviterId: string | null;
   setConnectionMode: React.Dispatch<React.SetStateAction<GameModeType>>;
   connetionMode: GameModeType;
   joinMessage: JoinedMessage | null;
   isConnetingToSocket: boolean;
   joiningLink: null | string;
+  setInviterId: React.Dispatch<React.SetStateAction<string | null>>;
   setIsConnetingToSocket: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -39,6 +42,8 @@ const defaultSocketContext: SocketContext = {
   connetionMode: undefined,
   joinMessage: null,
   isConnetingToSocket: false,
+  inviterId: null,
+  setInviterId: () => {},
   setIsConnetingToSocket: () => {},
   joiningLink: null,
 };
@@ -49,12 +54,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [isConnetingToSocket, setIsConnetingToSocket] = useState(false);
+  const [inviterId, setInviterId] = useState<string | null>(null);
   const [joiningLink, setJoiningLink] = useState<string | null>(null);
   const [connetionMode, setConnectionMode] = useState<GameModeType>(undefined);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const user = session?.user;
   const [joinMessage, setJoinMessage] = useState<JoinedMessage | null>(null);
-  const { email, name, image } = user || {};
+  const { email, name, image } = session?.user || {};
   console.log(connetionMode, socket?.OPEN);
 
   useEffect(() => {
@@ -62,7 +67,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     console.log(connetionMode, email);
 
     const ws = new WebSocket(
-      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}`
+      `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
     );
 
     ws.onopen = () => {
@@ -91,7 +96,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
         case "joiningLink":
           console.log(data.joiningLink);
           setJoiningLink(data.joiningLink);
-          toast.success("joining link received");
+          toast.success("inviter link received: Send to you friend");
+          break;
+
+        case "expiredJoiningLink":
+          console.log(data.message);
+          toast.success(data.messae);
           break;
       }
     };
@@ -110,13 +120,15 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     return () => {
       ws.close();
     };
-  }, [connetionMode, email, name, image, router]);
+  }, [connetionMode, email, name, image, router, inviterId]);
 
   return (
     <SocketContext.Provider
       value={{
         socket,
         joinMessage,
+        inviterId,
+        setInviterId,
         setConnectionMode,
         connetionMode,
         isConnetingToSocket,
