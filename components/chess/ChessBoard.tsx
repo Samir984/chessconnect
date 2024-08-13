@@ -37,13 +37,13 @@ export default function ChessBoard() {
 
   useEffect(() => {
     const updateBoardWidth = () => {
-      console.log(BOARD_WIDTH, window.outerWidth);
+      console.log(BOARD_WIDTH, window?.outerWidth);
 
-      if (window.outerWidth < 640) {
+      if (window?.outerWidth < 640) {
         setBOARD_WIDTH(360);
-      } else if (window.outerWidth < 768) {
+      } else if (window?.outerWidth < 768) {
         setBOARD_WIDTH(450);
-      } else if (window.outerWidth < 1024) {
+      } else if (window?.outerWidth < 1024) {
         setBOARD_WIDTH(600);
       } else {
         setBOARD_WIDTH(660);
@@ -52,12 +52,11 @@ export default function ChessBoard() {
 
     updateBoardWidth();
 
-    window.addEventListener("resize", updateBoardWidth);
+    window?.addEventListener("resize", updateBoardWidth);
 
-    return () => window.removeEventListener("resize", updateBoardWidth);
+    return () => window?.removeEventListener("resize", updateBoardWidth);
   }, [BOARD_WIDTH]);
 
-  console.log(BOARD_WIDTH, window.innerWidth);
   return (
     <div className="relative w-[360px] phone:w-[450px] tablet:w-[600px] laptop:w-[660px] ">
       <Chessboard

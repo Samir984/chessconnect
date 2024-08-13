@@ -149,7 +149,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
               Share this link with your friend
             </span>
             <ClipboardCopy
-              value={`${window.location.origin}/connection-request${joiningLink}`}
+              value={`${window?.location.origin}/connection-request${joiningLink}`}
             />
           </div>
         )

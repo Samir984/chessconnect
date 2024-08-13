@@ -15,11 +15,11 @@ interface PlayerProps {
 }
 
 const PlayerCard = ({ image, name, label }: PlayerProps) => (
-  <div className="flex flex-col items-center bg-gray-800 p-6 rounded-lg shadow-lg w-48">
+  <div className="flex flex-col items-center bg-gray-800 p-3 phone:p-4 laptop:p-6 rounded-lg shadow-lg w-44 phone:w-48">
     <div className="w-24 h-24 rounded-full border-4 border-gray-600 overflow-hidden  ">
       <Image src={image} width={100} height={100} alt={`${label}-image`} />
     </div>
-    <h2 className="text-xl font-semibold text-white mt-3 whitespace-nowrap line-clamp-1">
+    <h2 className="text-xl font-medium phone:font-semibold text-white mt-3 whitespace-nowrap line-clamp-1">
       {name || "Player"}
     </h2>
     <p className="text-gray-300 text-base">{label}</p>
@@ -59,11 +59,11 @@ export default function Page() {
   }, [setInviterId, inviterId]);
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-12">
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-100">
+      <h1 className="text-2xl phone:text-3xl laptop:text-4xl font-extrabold mb-8 text-center text-gray-100">
         Match Request
       </h1>
 
-      <div className="flex  gap-8 mb-12">
+      <div className="flex  gap-4 phone:gap-8 mb-12 flex-wrap items-center justify-center">
         <PlayerCard image={inviterImage} name={inviterName} label="Inviter" />
         <PlayerCard
           image={image || "/blackP.png"}
