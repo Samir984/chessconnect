@@ -25,6 +25,7 @@ interface UserCardProps {
 
 export default function Page() {
   const { data: session } = useSession();
+  const { email, name, image } = session?.user || {};
 
   return (
     <div className="text-white py-8 relative min-h-screen flex flex-col items-center bg-black">
@@ -88,19 +89,7 @@ const ConnectionButtons = ({
 
     if (socket?.OPEN === 1 || connetionMode === connectMode) {
       setConnectionMode(undefined);
-
       socketCloseHandler(socket, connetionMode, joiningLink, userId);
-      // if (joiningLink) {
-      //   socket?.close(
-      //     1000,
-      //     JSON.stringify({
-      //       type: "waitingQueueForFM_Cleanup",
-      //       gameId: getQueryParam(joiningLink, "gameId"),
-      //     })
-      //   );
-      // } else {
-      //   socket?.close();
-      // }
       return;
     }
     setIsConnetingToSocket(true);
@@ -139,7 +128,6 @@ const ConnectionButtons = ({
 
 // UserInfo Component
 const UserInfo = ({ user }: UserInfoProps) => {
-  const [copied, setCopied] = useState(false);
   const { connetionMode, socket, isConnetingToSocket, joiningLink } =
     useSocket();
 
@@ -150,24 +138,19 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <UserCard image={user?.image} name={user?.name} label="user" />
       </div>
 
-      {connetionMode === "F" &&
-      !copied &&
-      joiningLink === null &&
-      !isConnetingToSocket ? (
+      {connetionMode === "F" && joiningLink === null && !isConnetingToSocket ? (
         <Loader
           label="Generating Connection Link"
           loaderClassName="generating-link-loader"
         />
       ) : (
         connetionMode === "F" && (
-          <div className="flex items-center">
+          <div className="flex  flex-col items-center">
             <span className="text-gray-400 text-base">
               Share this link with your friend
             </span>
             <ClipboardCopy
-              value="i hate you"
-              copied={copied}
-              setCopied={setCopied}
+              value={`${window.location.origin}/connection-request${joiningLink}`}
             />
           </div>
         )

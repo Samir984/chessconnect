@@ -6,14 +6,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 type ClipboardCopyProps = {
   value: string;
-  copied: boolean;
-  setCopied: Dispatch<SetStateAction<boolean>>;
 };
-export default function ClipboardCopy({
-  value,
-  copied,
-  setCopied,
-}: ClipboardCopyProps) {
+export default function ClipboardCopy({ value }: ClipboardCopyProps) {
+  const [copied, setCopied] = useState(false);
   return (
     <div className="flex gap-5 items-center bg-black p-4 rounded-lg">
       <input

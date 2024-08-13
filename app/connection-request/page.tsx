@@ -2,17 +2,18 @@
 import React from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface PlayerProps {
-  image?: string | null;
-  name?: string | null;
+  image: string;
+  name: string;
   label: string;
 }
 
 const PlayerCard = ({ image, name, label }: PlayerProps) => (
-  <div className="flex flex-col items-center bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xs">
+  <div className="flex flex-col items-center bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
     <Image
-      src={image || "/blackP.png"}
+      src={image}
       width={100}
       height={100}
       alt={`${label}-image`}
@@ -27,18 +28,28 @@ const PlayerCard = ({ image, name, label }: PlayerProps) => (
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const gameId = searchParams.get("gameId");
-  const inviterName = searchParams.get("inviterName");
-  const inviterImage = searchParams.get("inviterImage");
+  const { data: session } = useSession();
+  const { email, name, image } = session?.user || {};
+
+  const gameId = searchParams.get("gameId") as string;
+  const inviterName = searchParams.get("inviterName") as string;
+  const inviterImage = searchParams.get("inviterImage") as string;
+
+  const handelJoining = function () {};
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-12">
       <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-100">
-        Connect with a Player
+        Match Request
       </h1>
 
-      <div className="flex flex-col lg:flex-row gap-8 mb-12">
+      <div className="flex  gap-8 mb-12">
         <PlayerCard image={inviterImage} name={inviterName} label="Inviter" />
-        <PlayerCard image={player2.image} name={player2.name} label="Invitee" />
+        <PlayerCard
+          image={image || "/blackP.png"}
+          name={name || "Player"}
+          label="Invitee"
+        />
       </div>
 
       <button
