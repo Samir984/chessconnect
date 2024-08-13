@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useSocket } from "@/provider/SocketProvider";
 import Loader from "@/components/Loader";
+import { replaceUnderscores } from "@/utils/helper";
 
 interface PlayerProps {
   image: string;
@@ -38,12 +39,16 @@ export default function Page() {
   const { email, name, image } = session?.user || {};
 
   const inviterId = searchParams.get("inviterId") as string;
-  const inviterName = searchParams.get("inviterName") as string;
-  const inviterImage = searchParams.get("inviterImage") as string;
+  const inviterName = replaceUnderscores(
+    searchParams.get("inviterName") as string
+  ) as string;
+  const inviterImage = ("https://lh3.googleusercontent.com/a/" +
+    searchParams.get("inviterImage")) as string;
 
   const handelJoining = function () {
     if (!email) {
-      toast.error("Please login in first");
+      toast.error("Please login in first to play");
+      return;
     }
     setIsConnetingToSocket(true);
     setConnectionMode("J");

@@ -17,6 +17,10 @@ export function getSquarePosition(square: string): {
   };
 }
 
+export function replaceUnderscores(name: string): string {
+  return name.replace(/_/g, " ");
+}
+
 export function getQueryParam(queryParam: string, param: string) {
   const fullUrl = new URL(queryParam, "http://localhost");
   const urlParams = new URLSearchParams(fullUrl.search);
