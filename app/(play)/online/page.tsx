@@ -10,7 +10,9 @@ import { User } from "next-auth";
 import { useSocket } from "@/provider/SocketProvider";
 import toast from "react-hot-toast";
 import { socketCloseHandler } from "@/utils/helper";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { IoMdClose } from "react-icons/io";
+import { IoMdCloseCircle } from "react-icons/io";
 
 interface UserInfoProps {
   user: User;
@@ -59,6 +61,7 @@ const ConnectionButtons = ({
 }: {
   userId: string | null | undefined;
 }) => {
+  const [showCloseButton, setShowCloseButton] = useState(false);
   const {
     socket,
     setConnectionMode,
@@ -87,12 +90,15 @@ const ConnectionButtons = ({
     if (isConnetingToSocket) {
       timeOut = setTimeout(() => {
         if (isConnetingToSocket) {
+          setShowCloseButton(true);
+
           toast.success(`Server is staring, it might take around 50 seconds`);
         }
       }, 10000);
     }
 
     return () => {
+      setShowCloseButton(false);
       clearTimeout(timeOut);
     };
   }, [isConnetingToSocket]);
@@ -101,20 +107,39 @@ const ConnectionButtons = ({
     <div>
       <div className="flex gap-6 mb-12 flex-wrap  items-center justify-center">
         <button
-          className="bg-blue-700 whitespace-nowrap text-white font-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className={`bg-blue-700 whitespace-nowrap text-white font-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed ${
+            socket?.OPEN && connetionMode === "R" && "bg-red-700"
+          }`}
           onClick={() => handelSocketConnetion("R")}
           disabled={isConnetingToSocket}
         >
           <TbArrowsRandom size={24} className="text-blue-300" />
-          <span className="text-lg">Connect with Random</span>
+          <span className="text-lg">
+            {socket?.OPEN ? "Close Socket Connetion " : "Connect with Random"}
+          </span>
         </button>
         <button
-          className="bg-green-700 whitespace-nowrap text-whitefont-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className={`bg-green-700 whitespace-nowrap text-white font-medium phone:font-semibold py-2 px-3  laptop:py-3 laptop:px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-3 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed ${
+            socket?.OPEN && connetionMode === "F" && "bg-red-700"
+          }`}
           onClick={() => handelSocketConnetion("F")}
           disabled={isConnetingToSocket}
         >
           <FaUserFriends size={24} className="text-green-300" />
-          <span className="text-lg">Connect with Friend</span>
+          {socket?.OPEN ? "Close Socket Connetion " : "Connect with Friend"}
+        </button>
+
+        <button
+          className={`flex flex-col items-center  bg-red-800   p-2 rounded-lg font-medium  absolute  transition-all duration-300 z-50 ${
+            showCloseButton ? "top-20" : "-top-36"
+          } `}
+          onClick={() => {
+            setConnectionMode(undefined);
+            socket?.close();
+          }}
+        >
+          <IoMdCloseCircle size={24} />
+          <span className="text-[12px]">Close Requesting</span>
         </button>
       </div>
       {isConnetingToSocket && (
@@ -163,9 +188,9 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <Loader
           label={`${
             connetionMode === "F"
-              ? "Waiting for friend to connect"
+              ? "Waiting for friend to join"
               : connetionMode === "R"
-              ? "Connecting to Player"
+              ? "Waiting for opponent"
               : ""
           } `}
           loaderClassName="waiting-to-join "
@@ -189,13 +214,23 @@ const UserCard = ({ image, name, label }: UserCardProps) => (
 );
 
 // ConnectionNote Component
-const ConnectionNote = () => (
-  <div className="flex items-center line-clamp-5 gap-2 phone:gap-4 bg-gray-800 text-yellow-300 text-sm  font-normal phone:font-medium  px-3 py-2 phone:px-4 phone:py-3 laptop:px-6 laptop:py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
-    <RiErrorWarningLine className="w-6 h-6 phone:w-7 phone:h-7  flex-shrink-0 " />
-    <p>
-      <strong>Note:</strong> Playing with a random person may occasionally
-      result in connection issues, as our site is still growing. For a smoother
-      and more reliable experience, we recommend playing with a friend.
-    </p>
-  </div>
-);
+const ConnectionNote = () => {
+  const [show, setShow] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setShow(false);
+    }, 10000);
+  }, []);
+  if (!show) return;
+  return (
+    <div className="flex items-center line-clamp-5 gap-2 phone:gap-4 bg-gray-800 text-yellow-300 text-sm  font-normal phone:font-medium  px-3 py-2 phone:px-4 phone:py-3 laptop:px-6 laptop:py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
+      <RiErrorWarningLine className="w-6 h-6 phone:w-7 phone:h-7  flex-shrink-0 " />
+      <p>
+        <strong>Note:</strong> Playing with a random person may occasionally
+        result in connection issues, as our site is still growing. For a
+        smoother and more reliable experience, we recommend playing with a
+        friend.
+      </p>
+    </div>
+  );
+};
