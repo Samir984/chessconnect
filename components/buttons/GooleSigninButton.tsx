@@ -10,25 +10,26 @@ export default function GoogleSigninButton() {
 
   return (
     <button
-      className="bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300 w-full"
+      className="text-white rounded-lg shadow-md ransition-all duration-300 w-full"
       onClick={() => {
         signInWithGoogleAction();
       }}
     >
       {!session ? (
-        <div className="flex items-center justify-center phone:justify-normal  gap-4 py-4 px-1">
+        <div className="flex items-center justify-center phone:justify-normal  gap-4 phone:py-4 p-1">
           <GoogleIcon />
-          <span className="text-base hidden laptop:block">
+          <span className="text-base hidden phone:block">
             Sign in with Google
           </span>
         </div>
       ) : (
-        <div className="flex items-center justify-center phone:justify-normal  gap-4 py-4 px-2">
+        <div className="flex items-center justify-center phone:justify-normal  gap-4 phone:py-4 p-1">
           <Image
             src={session.user?.image as string} // Fallback image
             width={32}
             height={32}
             alt="user-image"
+            className="rounded-full sm-phone:rounded-none"
           />
           <span className="text-base hidden phone:block">
             {session.user?.name}
