@@ -5,7 +5,7 @@ import YourLabel from "@/components/YourLabel";
 
 export default function Home() {
   return (
-    <div className=" text-white  py-3  ">
+    <div className=" text-white min-h-screen py-3  ">
       <h1 className="text-2xl text-center tablet:text-3xl laptop:text-4xl font-bold mb-2 laptop:mb-6">
         Offline Mode
       </h1>
