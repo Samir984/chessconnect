@@ -20,7 +20,12 @@ export default function CustomeKingPieces({
     <div
       style={{ position: "relative", width: squareWidth, height: squareWidth }}
     >
-      <svg viewBox="1 1 43 43" width="82.5" height="82.5" className="block">
+      <svg
+        viewBox="1 1 43 43"
+        width={`${squareWidth}`}
+        height={`${squareWidth}`}
+        className="block"
+      >
         <g>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -48,15 +53,8 @@ export default function CustomeKingPieces({
       </svg>
       {status && (
         <div
-          style={{
-            position: "absolute", // Explicit type assertion
-            top: "0",
-            left: "80%",
-            transform: "translateX(-50%)",
-            fontSize: "16px",
-            fontWeight: "bold",
-            color,
-          }}
+          className="absolute top-0 left-[80%] -translate-x-1/2 text-xs font-meidum phone:text-sm phone:font-semibold tablet:text-base tablet:font-bold "
+          style={{ color }}
         >
           {status}
         </div>

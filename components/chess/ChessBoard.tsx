@@ -2,10 +2,33 @@
 import { Chessboard } from "react-chessboard";
 import { useGameContext } from "./ChessContextProvider";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import CustomeKingPieces, { KingStatus } from "./CustomeKingPieces";
 
 export default function ChessBoard() {
   const [boardWidth, setBoardWidth] = useState<number>(660);
   let squareSize = boardWidth / 8;
+  const {
+    game,
+    validMoves,
+    applyCustomStyles,
+    onDrop,
+    onSquareClick,
+    onPieceClick,
+  } = useGameContext();
+
+  function getKingStatus(kingColor: "w" | "b"): KingStatus {
+    if (game.isGameOver()) {
+      if (game.isDraw()) {
+        toast.success("game is draw");
+        return "D";
+      }
+      const winner =
+        game.isCheckmate() && game.turn() === kingColor ? "L" : "W";
+      return winner;
+    }
+    return null;
+  }
 
   function getSquarePosition(square: string): { top: number; left: number } {
     const file = square[0];
@@ -18,15 +41,22 @@ export default function ChessBoard() {
     };
   }
 
-  const {
-    game,
-    validMoves,
-    applyCustomStyles,
-    onDrop,
-    onSquareClick,
-    onPieceClick,
-    kingCustomePieces,
-  } = useGameContext();
+  const kingCustomePieces = {
+    wK: ({ squareWidth }: { squareWidth: number }) => (
+      <CustomeKingPieces
+        color="white"
+        status={getKingStatus("w")}
+        squareWidth={squareWidth}
+      />
+    ),
+    bK: ({ squareWidth }: { squareWidth: number }) => (
+      <CustomeKingPieces
+        color="black"
+        status={getKingStatus("b")}
+        squareWidth={squareWidth}
+      />
+    ),
+  };
 
   useEffect(() => {
     const updateBoardWidth = () => {

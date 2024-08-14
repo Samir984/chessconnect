@@ -87,9 +87,7 @@ const ConnectionButtons = ({
     if (isConnetingToSocket) {
       timeOut = setTimeout(() => {
         if (isConnetingToSocket) {
-          toast.success(
-            `Server is staring, it might take around 50 sec, ${isConnetingToSocket}`
-          );
+          toast.success(`Server is staring, it might take around 50 seconds`);
         }
       }, 10000);
     }

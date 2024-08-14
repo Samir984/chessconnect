@@ -27,7 +27,7 @@ export default function RootLayout({
             <header className="sm-phone:w-28 p-2 sm-phone:p-0  sm-phone:h-screen  phone:w-64 laptop:w-72 sm-phone:sticky sm-phone:top-0 sm-phone:left-0  block border-b-[1px] border-gray-500 sm-phone:border-r-[1px]  sm-phone:border-b-[0px] sticky top-0 left-0 bg-black z-10">
               <MainNav />
             </header>
-            <main className="w-full min-h-[90vh] ">{children}</main>
+            <main className="w-full min-h-[] ">{children}</main>
           </div>
         </Provider>
       </body>
