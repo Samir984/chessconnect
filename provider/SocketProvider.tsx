@@ -67,7 +67,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     console.log(connetionMode, email);
 
     const ws = new WebSocket(
-      `wss://chess-backend-ett2.onrender.com/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
+      `wss://shine-holy-society.glitch.me/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
     );
 
     // const ws = new WebSocket(

@@ -11,7 +11,6 @@ import { useSocket } from "@/provider/SocketProvider";
 import toast from "react-hot-toast";
 import { socketCloseHandler } from "@/utils/helper";
 import { useEffect, useState } from "react";
-import { IoMdClose } from "react-icons/io";
 import { IoMdCloseCircle } from "react-icons/io";
 
 interface UserInfoProps {
@@ -92,7 +91,7 @@ const ConnectionButtons = ({
         if (isConnetingToSocket) {
           setShowCloseButton(true);
 
-          toast.success(`Server is staring, it might take around 50 seconds`);
+          toast.success(`Server is staring, it might take max 10-20 second`);
         }
       }, 4000);
     }
