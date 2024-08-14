@@ -4,31 +4,24 @@ import { useGameContext } from "./ChessContextProvider";
 import { useEffect, useState } from "react";
 
 export default function ChessBoard() {
-  const [BOARD_WIDTH, setBOARD_WIDTH] = useState(660);
-  let SQUARE_SIZE = BOARD_WIDTH / 8;
+  const [boardWidth, setBoardWidth] = useState<number>(660);
+  let squareSize = boardWidth / 8;
 
-  function getSquarePosition(square: string): {
-    top: number;
-    left: number;
-  } {
+  function getSquarePosition(square: string): { top: number; left: number } {
     const file = square[0];
     const rank = parseInt(square[1], 10);
     const fileIndex = "abcdefgh".indexOf(file);
     const rankIndex = 8 - rank;
     return {
-      top: rankIndex * SQUARE_SIZE,
-      left: fileIndex * SQUARE_SIZE,
+      top: rankIndex * squareSize,
+      left: fileIndex * squareSize,
     };
   }
 
   const {
     game,
-    side,
     validMoves,
-    targetSquare,
     applyCustomStyles,
-    setSide,
-    makeAMove,
     onDrop,
     onSquareClick,
     onPieceClick,
@@ -37,30 +30,30 @@ export default function ChessBoard() {
 
   useEffect(() => {
     const updateBoardWidth = () => {
-      console.log(BOARD_WIDTH, window?.outerWidth);
+      const width = window.innerWidth;
 
-      if (window?.outerWidth < 640) {
-        setBOARD_WIDTH(350);
-      } else if (window?.outerWidth < 768) {
-        setBOARD_WIDTH(450);
-      } else if (window?.outerWidth < 1024) {
-        setBOARD_WIDTH(550);
+      if (width < 640) {
+        setBoardWidth(350);
+      } else if (width < 768) {
+        setBoardWidth(450);
+      } else if (width < 1024) {
+        setBoardWidth(550);
       } else {
-        setBOARD_WIDTH(660);
+        setBoardWidth(660);
       }
     };
 
     updateBoardWidth();
 
-    window?.addEventListener("resize", updateBoardWidth);
+    window.addEventListener("resize", updateBoardWidth);
 
-    return () => window?.removeEventListener("resize", updateBoardWidth);
-  }, [BOARD_WIDTH]);
+    return () => window.removeEventListener("resize", updateBoardWidth);
+  }, []);
 
   return (
-    <div className="relative w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] ">
+    <div className="relative" style={{ width: `${boardWidth}px` }}>
       <Chessboard
-        boardWidth={BOARD_WIDTH}
+        boardWidth={boardWidth}
         position={game.fen()}
         onPieceDrop={onDrop}
         onSquareClick={onSquareClick}
@@ -77,10 +70,10 @@ export default function ChessBoard() {
             key={square}
             style={{
               position: "absolute" as "absolute", // Explicit type assertion
-              top: `${top + SQUARE_SIZE / 2}px`,
-              left: `${left + SQUARE_SIZE / 2}px`,
-              width: `${SQUARE_SIZE / 6}px`,
-              height: `${SQUARE_SIZE / 6}px`,
+              top: `${top + squareSize / 2}px`,
+              left: `${left + squareSize / 2}px`,
+              width: `${squareSize / 6}px`,
+              height: `${squareSize / 6}px`,
               backgroundColor: "yellow",
               borderRadius: "50%",
               transform: "translate(-50%, -50%)",
