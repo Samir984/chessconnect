@@ -10,7 +10,6 @@ import React, {
 import { Chess, Move, Square } from "chess.js";
 import toast from "react-hot-toast";
 import { MakeSound } from "@/utils/sound";
-import CustomeKingPieces, { KingStatus } from "./CustomeKingPieces";
 import { useSocket } from "@/provider/SocketProvider";
 
 interface ChessContextType {
@@ -31,7 +30,6 @@ interface ChessContextType {
   onDrop: (sourceSquare: string, targetSquare: string) => boolean;
   onSquareClick: (square: string) => void;
   onPieceClick: (piece: string, square: Square) => void;
-  kingCustomePieces: any;
 }
 
 const ChessContext = createContext<ChessContextType | undefined>(undefined);
@@ -47,19 +45,6 @@ export default function ChesstContextProvider({
   const [validMoves, setValidMoves] = useState<string[]>([]);
   const [targetSquare, setTargetSquare] = useState<string>("");
   const [applyCustomStyles, setApplyCustomStyles] = useState(true);
-
-  function getKingStatus(kingColor: "w" | "b"): KingStatus {
-    if (game.isGameOver()) {
-      if (game.isDraw()) {
-        toast.success("game is draw");
-        return "D";
-      }
-      const winner =
-        game.isCheckmate() && game.turn() === kingColor ? "L" : "W";
-      return winner;
-    }
-    return null;
-  }
 
   const makeAMove = useCallback(
     (
@@ -135,23 +120,6 @@ export default function ChesstContextProvider({
     setTargetSquare(square);
   }
 
-  const kingCustomePieces = {
-    wK: ({ squareWidth }: { squareWidth: number }) => (
-      <CustomeKingPieces
-        color="white"
-        status={getKingStatus("w")}
-        squareWidth={squareWidth}
-      />
-    ),
-    bK: ({ squareWidth }: { squareWidth: number }) => (
-      <CustomeKingPieces
-        color="black"
-        status={getKingStatus("b")}
-        squareWidth={squareWidth}
-      />
-    ),
-  };
-
   // for communcation after connetion
   useEffect(() => {
     if (!socket) return;
@@ -222,7 +190,6 @@ export default function ChesstContextProvider({
         onDrop,
         onSquareClick,
         onPieceClick,
-        kingCustomePieces,
       }}
     >
       {children}
