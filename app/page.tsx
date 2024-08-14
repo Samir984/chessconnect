@@ -5,8 +5,8 @@ import YourLabel from "@/components/YourLabel";
 
 export default function Home() {
   return (
-    <div className="  text-white min-h-screen flex flex-col items-center gap-2 justify-center py-4">
-      <h1 className="text-2xl tablet:text-3xl laptop:text-4xl font-bold mb-3 laptop:mb-6">
+    <div className=" text-white  py-3  ">
+      <h1 className="text-2xl text-center tablet:text-3xl laptop:text-4xl font-bold mb-2 laptop:mb-6">
         Offline Mode
       </h1>
       <div className="flex gap-2 phone:gap-4 flex-col items-center">

@@ -17,14 +17,14 @@ export default function OpponentLabel({
   const isUser = false;
 
   return (
-    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-2 phone:py-3  bg-black text-white border border-gray-700 rounded-lg shadow-lg">
-      <div className="flex items-center gap-4">
+    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-1 sm-phone:p-2  bg-black text-white border border-gray-700 rounded-lg shadow-lg">
+      <div className="flex  gap-4 sm-phone:gap-10 items-center ">
         <Image
           src={image || "/blackP.png"} // Fallback image
           width={42}
           height={42}
           alt="user-image"
-          className="rounded-full border border-gray-600"
+          className="rounded-full border-2 w-10 h-10 border-gray-700"
         />
         <span className="text-lg font-semibold">{name || "Opponent"}</span>
       </div>

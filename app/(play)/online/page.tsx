@@ -10,6 +10,7 @@ import { User } from "next-auth";
 import { useSocket } from "@/provider/SocketProvider";
 import toast from "react-hot-toast";
 import { socketCloseHandler } from "@/utils/helper";
+import { useEffect } from "react";
 
 interface UserInfoProps {
   user: User;
@@ -26,10 +27,10 @@ export default function Page() {
   const { data: session } = useSession();
 
   return (
-    <div className="text-white py-8 relative min-h-screen flex flex-col items-center bg-black">
+    <div className="text-white py-8 relative min-h-screen flex flex-col items-center">
       <ConnectionNote />
       <div className="flex flex-col justify-center items-center mt-32 px-4">
-        <h1 className="text-2xl phone:text-3xl laptop:text-4xl text-slate-200 font-extrabold mb-10 text-center leading-tight">
+        <h1 className="text-2xl phone:text-3xl laptop:text-4xl text-slate-200 font-extrabold mb-5 phone:mb-10 text-center leading-tight">
           Connection with Player
         </h1>
 
@@ -51,18 +52,6 @@ export default function Page() {
     </div>
   );
 }
-
-// ConnectionNote Component
-const ConnectionNote = () => (
-  <div className="flex items-center line-clamp-5 gap-2 phone:gap-4 bg-gray-800 text-yellow-300 text-sm  font-normal phone:font-medium  px-3 py-2 phone:px-4 phone:py-3 laptop:px-6 laptop:py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
-    <RiErrorWarningLine className="w-6 h-6 phone:w-7 phone:h-7  flex-shrink-0 " />
-    <p>
-      <strong>Note:</strong> Playing with a random person may occasionally
-      result in connection issues, as our site is still growing. For a smoother
-      and more reliable experience, we recommend playing with a friend.
-    </p>
-  </div>
-);
 
 // ConnectionButtons Component
 const ConnectionButtons = ({
@@ -92,6 +81,23 @@ const ConnectionButtons = ({
     setIsConnetingToSocket(true);
     setConnectionMode(connectMode);
   };
+
+  useEffect(() => {
+    let timeOut: NodeJS.Timeout;
+    if (isConnetingToSocket) {
+      timeOut = setTimeout(() => {
+        if (isConnetingToSocket) {
+          toast.success(
+            `Server is staring, it might take around 50 sec, ${isConnetingToSocket}`
+          );
+        }
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [isConnetingToSocket]);
 
   return (
     <div>
@@ -181,5 +187,17 @@ const UserCard = ({ image, name, label }: UserCardProps) => (
       className="rounded-full"
     />
     <span className="text-base">{name || "Player"}</span>
+  </div>
+);
+
+// ConnectionNote Component
+const ConnectionNote = () => (
+  <div className="flex items-center line-clamp-5 gap-2 phone:gap-4 bg-gray-800 text-yellow-300 text-sm  font-normal phone:font-medium  px-3 py-2 phone:px-4 phone:py-3 laptop:px-6 laptop:py-4 rounded-lg shadow-lg absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%]">
+    <RiErrorWarningLine className="w-6 h-6 phone:w-7 phone:h-7  flex-shrink-0 " />
+    <p>
+      <strong>Note:</strong> Playing with a random person may occasionally
+      result in connection issues, as our site is still growing. For a smoother
+      and more reliable experience, we recommend playing with a friend.
+    </p>
   </div>
 );

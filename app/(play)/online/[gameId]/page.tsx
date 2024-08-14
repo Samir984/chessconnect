@@ -17,27 +17,29 @@ export default function PlayOnline() {
   console.log(joinMessage?.opponent, joinMessage);
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col items-center gap-2 phone:gap-4 justify-center py-4">
-      <h1 className="text-2xl  tablet:text-3xl laptop:text-4xl font-bold mb-3 laptop:mb-6">
+    <div className=" text-white py-3  ">
+      <h1 className="text-2xl text-center tablet:text-3xl laptop:text-4xl font-bold mb-2 laptop:mb-6">
         Online Mode
       </h1>
-      {joinMessage?.side === "W" ? (
-        <>
-          <OpponenetLabel opponentLabel={joinMessage.opponent} />
-          <ChesstContextProvider>
-            <ChessBoard />
-          </ChesstContextProvider>
-          <YourLabel />
-        </>
-      ) : (
-        <>
-          <YourLabel />
-          <ChesstContextProvider>
-            <ChessBoard />
-          </ChesstContextProvider>
-          <OpponenetLabel opponentLabel={joinMessage?.opponent} />
-        </>
-      )}
+      <div className="flex gap-2 phone:gap-4 flex-col items-center">
+        {joinMessage?.side === "W" ? (
+          <>
+            <OpponenetLabel opponentLabel={joinMessage.opponent} />
+            <ChesstContextProvider>
+              <ChessBoard />
+            </ChesstContextProvider>
+            <YourLabel />
+          </>
+        ) : (
+          <>
+            <YourLabel />
+            <ChesstContextProvider>
+              <ChessBoard />
+            </ChesstContextProvider>
+            <OpponenetLabel opponentLabel={joinMessage?.opponent} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

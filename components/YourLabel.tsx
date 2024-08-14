@@ -11,14 +11,14 @@ export default function YourLabel() {
   const isUser = true;
 
   return (
-    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-2 phone:py-3 gap-10 text-white bg-gray-800 rounded-lg shadow-lg">
-      <div className="flex gap-10 items-center">
+    <div className="flex justify-between w-[350px] phone:w-[450px] tablet:w-[550px] laptop:w-[660px] p-1 sm-phone:p-2 phone:py-3  text-white bg-gray-800 rounded-lg shadow-lg">
+      <div className="flex gap-4 sm-phone:gap-10 items-center">
         <Image
           src={session?.user?.image || "/whiteP.png"} // Fallback image
-          width={48}
-          height={48}
+          width={42}
+          height={4}
           alt="user-image"
-          className="rounded-full border-2 border-gray-700"
+          className="rounded-full border-2 w-10 h-10 border-gray-700"
         />
         <span className="text-base">{session?.user?.name || "Player"}</span>
       </div>
