@@ -28,7 +28,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           console.log("user created \n\n\n");
         }
         return true;
-      } catch {
+      } catch (error) {
+        console.log(error, "\n\n\n");
         return false;
       }
     },
