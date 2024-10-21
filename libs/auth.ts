@@ -35,15 +35,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token }) {
       console.log("jwt callback /n/n");
-      // const user = await prisma.user.findUnique({
-      //   where: { email: token?.email as string },
-      // });
-      // token.userId = user?.id;
+      const user = await prisma.user.findUnique({
+        where: { email: token?.email as string },
+      });
+      token.userId = user?.id;
       return token;
     },
     async session({ session, token }) {
       console.log("session callback");
-      // session.user.userId = token.userId;
+      session.user.userId = token.userId;
       return session;
     },
   },
