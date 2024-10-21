@@ -22,7 +22,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const newUser = await prisma.user.create({
             data: {
               email: user.email as string,
-              name: user.name as string,
+              fullName: user.name as string,
             },
           });
           console.log(userExits);
@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const user = await prisma.user.findUnique({
         where: { email: token?.email as string },
       });
-      token.userId = user?.userId;
+      token.userId = user?.id;
       return token;
     },
     async session({ session, token }) {
@@ -50,3 +50,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/",
   },
 });
+
+export const runtime = "nodejs";
