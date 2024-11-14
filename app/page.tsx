@@ -12,7 +12,7 @@ export default function Home() {
       <div className="flex gap-2 phone:gap-4 flex-col items-center">
         <OpponenetLabel opponentLabel={{ name: "Opponent", image: null }} />
         <ChesstContextProvider>
-          <ChessBoard />
+          <ChessBoard orientation="white" />
         </ChesstContextProvider>
         <YourLabel />
       </div>

@@ -1,13 +1,18 @@
 "use client";
 import { Chessboard } from "react-chessboard";
 import { useGameContext } from "./ChessContextProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import CustomeKingPieces, { KingStatus } from "./CustomeKingPieces";
 
-export default function ChessBoard() {
+export default function ChessBoard({
+  orientation,
+}: {
+  orientation: "white" | "black";
+}) {
   const [boardWidth, setBoardWidth] = useState<number>(660);
-  let squareSize = boardWidth / 8;
+  const squareSize = useMemo(() => boardWidth / 8, [boardWidth]);
+
   const {
     game,
     validMoves,
@@ -17,51 +22,57 @@ export default function ChessBoard() {
     onPieceClick,
   } = useGameContext();
 
-  function getKingStatus(kingColor: "w" | "b"): KingStatus {
-    if (game.isGameOver()) {
-      if (game.isDraw()) {
-        toast.success("game is draw");
-        return "D";
+  const getKingStatus = useCallback(
+    (kingColor: "w" | "b"): KingStatus => {
+      if (game.isGameOver()) {
+        if (game.isDraw()) {
+          toast.success("game is draw");
+          return "D";
+        }
+        return game.isCheckmate() && game.turn() === kingColor ? "L" : "W";
       }
-      const winner =
-        game.isCheckmate() && game.turn() === kingColor ? "L" : "W";
-      return winner;
-    }
-    return null;
-  }
+      return null;
+    },
+    [game]
+  );
 
-  function getSquarePosition(square: string): { top: number; left: number } {
-    const file = square[0];
-    const rank = parseInt(square[1], 10);
-    const fileIndex = "abcdefgh".indexOf(file);
-    const rankIndex = 8 - rank;
-    return {
-      top: rankIndex * squareSize,
-      left: fileIndex * squareSize,
-    };
-  }
+  const getSquarePosition = useCallback(
+    (square: string): { top: number; left: number } => {
+      const file = square[0];
+      const rank = parseInt(square[1], 10);
+      const fileIndex = "abcdefgh".indexOf(file);
+      const rankIndex = 8 - rank;
+      return {
+        top: rankIndex * squareSize,
+        left: fileIndex * squareSize,
+      };
+    },
+    [squareSize]
+  );
 
-  const kingCustomePieces = {
-    wK: ({ squareWidth }: { squareWidth: number }) => (
-      <CustomeKingPieces
-        color="white"
-        status={getKingStatus("w")}
-        squareWidth={squareWidth}
-      />
-    ),
-    bK: ({ squareWidth }: { squareWidth: number }) => (
-      <CustomeKingPieces
-        color="black"
-        status={getKingStatus("b")}
-        squareWidth={squareWidth}
-      />
-    ),
-  };
+  const kingCustomPieces = useMemo(
+    () => ({
+      wK: ({ squareWidth }: { squareWidth: number }) => (
+        <CustomeKingPieces
+          color="white"
+          status={getKingStatus("w")}
+          squareWidth={squareWidth}
+        />
+      ),
+      bK: ({ squareWidth }: { squareWidth: number }) => (
+        <CustomeKingPieces
+          color="black"
+          status={getKingStatus("b")}
+          squareWidth={squareWidth}
+        />
+      ),
+    }),
+    [getKingStatus]
+  );
 
   useEffect(() => {
     const updateBoardWidth = () => {
       const width = window.innerWidth;
-
       if (width < 640) {
         setBoardWidth(350);
       } else if (width < 768) {
@@ -73,17 +84,44 @@ export default function ChessBoard() {
       }
     };
 
+    // Manual debounce for resize event
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateBoardWidth, 100);
+    };
+
     updateBoardWidth();
+    window.addEventListener("resize", handleResize);
 
-    window.addEventListener("resize", updateBoardWidth);
-
-    return () => window.removeEventListener("resize", updateBoardWidth);
+    return () => {
+      clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  const adjustedValidMoves = useMemo(
+    () =>
+      validMoves.map((square) => {
+        const file = square[0];
+        const rank = parseInt(square[1], 10);
+        if (orientation === "black") {
+          const flippedFile = String.fromCharCode(
+            "h".charCodeAt(0) - (file.charCodeAt(0) - "a".charCodeAt(0))
+          );
+          const flippedRank = 9 - rank;
+          return flippedFile + flippedRank;
+        }
+        return square;
+      }),
+    [orientation, validMoves]
+  );
 
   return (
     <div className="relative" style={{ width: `${boardWidth}px` }}>
       <Chessboard
         boardWidth={boardWidth}
+        boardOrientation={orientation}
         position={game.fen()}
         onPieceDrop={onDrop}
         onSquareClick={onSquareClick}
@@ -91,23 +129,25 @@ export default function ChessBoard() {
         customSquareStyles={{}}
         customDarkSquareStyle={{ backgroundColor: "#0e7490" }}
         customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
-        customPieces={applyCustomStyles ? kingCustomePieces : undefined}
+        customPieces={applyCustomStyles ? kingCustomPieces : undefined}
       />
-      {validMoves.map((square) => {
+      {adjustedValidMoves.map((square) => {
         const { top, left } = getSquarePosition(square);
+
         return (
           <div
-            key={square}
+            key={square} // Use square as a unique key
             style={{
-              position: "absolute" as "absolute", // Explicit type assertion
+              position: "absolute",
               top: `${top + squareSize / 2}px`,
               left: `${left + squareSize / 2}px`,
-              width: `${squareSize / 6}px`,
-              height: `${squareSize / 6}px`,
-              backgroundColor: "yellow",
+              width: `${squareSize / 4}px`,
+              height: `${squareSize / 4}px`,
+              backgroundColor: "green",
               borderRadius: "50%",
               transform: "translate(-50%, -50%)",
               pointerEvents: "none",
+              border: "2px solid rgba(255, 215, 0, 0.9)",
             }}
           />
         );

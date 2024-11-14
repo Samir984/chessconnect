@@ -22,23 +22,15 @@ export default function PlayOnline() {
         Online Mode
       </h1>
       <div className="flex gap-2 phone:gap-4 flex-col items-center">
-        {joinMessage?.side === "W" ? (
-          <>
-            <OpponenetLabel opponentLabel={joinMessage.opponent} />
-            <ChesstContextProvider>
-              <ChessBoard />
-            </ChesstContextProvider>
-            <YourLabel />
-          </>
-        ) : (
-          <>
-            <YourLabel />
-            <ChesstContextProvider>
-              <ChessBoard />
-            </ChesstContextProvider>
-            <OpponenetLabel opponentLabel={joinMessage?.opponent} />
-          </>
-        )}
+        <div>
+          <OpponenetLabel opponentLabel={joinMessage.opponent} />
+          <ChesstContextProvider>
+            <ChessBoard
+              orientation={joinMessage.side == "W" ? "white" : "black"}
+            />
+          </ChesstContextProvider>
+          <YourLabel />
+        </div>
       </div>
     </div>
   );

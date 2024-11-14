@@ -38,7 +38,7 @@ interface SocketContext {
 
 const defaultSocketContext: SocketContext = {
   socket: null,
-  setConnectionMode: () => {}, // Placeholder function, will be overwritten by provider
+  setConnectionMode: () => {},
   connetionMode: undefined,
   joinMessage: null,
   isConnetingToSocket: false,
@@ -60,18 +60,24 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [joinMessage, setJoinMessage] = useState<JoinedMessage | null>(null);
   const { email, name, image } = session?.user || {};
-  console.log(connetionMode, socket?.OPEN);
+
+  const resetState = () => {
+    setIsConnetingToSocket(false);
+    setInviterId(null);
+    setJoiningLink(null);
+    setConnectionMode(undefined);
+    setJoinMessage(null);
+  };
 
   useEffect(() => {
     if (!connetionMode || !email) return;
-    console.log(connetionMode, email);
 
     const ws = new WebSocket(
       `wss://shine-holy-society.glitch.me/?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
     );
 
     // const ws = new WebSocket(
-    //   `ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}`
+    //   ws://localhost:8080?userId=${email}&name=${name}&image=${image}&mode=${connetionMode}&inviterId=${inviterId}
     // );
 
     ws.onopen = () => {
@@ -93,19 +99,21 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
       switch (data.type) {
         case "joined":
-          toast.success("join successfully");
+          toast.success("Join successfully");
           setJoinMessage(data);
           router.push(`online/${data.gameId}`);
           break;
         case "joiningLink":
           console.log(data.joiningLink);
           setJoiningLink(data.joiningLink);
-          toast.success("inviter link received: Send to you friend");
+          toast.success("Inviter link received: Send to your friend");
           break;
 
         case "expiredJoiningLink":
           console.log(data.message);
-          toast.error("Expired connetion Link: Inviter is no longer connected");
+          toast.error(
+            "Expired connection link: Inviter is no longer connected"
+          );
           break;
       }
     };
@@ -114,11 +122,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       router.push("/online");
       setIsConnetingToSocket(false);
       if (ws.CLOSED === 3) {
-        console.log("socket provider", ws.CLOSED);
+        console.log("Socket closed:", ws.CLOSED);
         setConnectionMode(undefined);
       }
-      toast.error("closed websocket connetion");
+      toast.error("WebSocket connection closed");
       setSocket(null);
+      resetState();
     };
 
     return () => {

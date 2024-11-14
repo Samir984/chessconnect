@@ -56,6 +56,7 @@ export default function ChesstContextProvider({
       let result: Move | null = null;
       try {
         result = gameCopy.move(move);
+        console.log("result: ", result, "\n\n\n", gameCopy, game.fen());
       } catch (err) {
         toast.error("invalid move");
       }
@@ -84,6 +85,7 @@ export default function ChesstContextProvider({
 
   function onDrop(sourceSquare: string, targetSquare: string): boolean {
     if (side === "noMove") return true;
+    console.log(side);
     if (game.turn() === "w" && side === "B") return false;
     if (game.turn() === "b" && side === "W") return false;
 
@@ -173,7 +175,7 @@ export default function ChesstContextProvider({
 
   // to set side
   useEffect(() => {
-    console.log("game side effect");
+    console.log("game side effect", joinMessage?.side);
     setSide(joinMessage?.side as "B" | "W");
   }, [joinMessage?.side]);
 
